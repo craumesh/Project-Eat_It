@@ -184,6 +184,7 @@
 				identify_code LIKE CONCAT('%', #{searchword}, '%') 
 				OR io_classification LIKE CONCAT('%', #{searchword}, '%') 
 				OR category LIKE CONCAT('%', #{searchword}, '%') 
+				OR product_name LIKE CONCAT('%', #{searchword}, '%') 
 				OR status LIKE CONCAT('%', #{searchword}, '%')
 			)
 	 </select>
@@ -216,10 +217,11 @@
 		AND(
 			identify_code LIKE CONCAT('%', #{searchword}, '%')
 			OR io_classification LIKE CONCAT('%', #{searchword}, '%')
-		 	OR category LIKE CONCAT('%', #{searchword}, '%') 
+		 	OR category LIKE CONCAT('%', #{searchword}, '%')
+		 	OR product_name LIKE CONCAT('%', #{searchword}, '%') 
 		 	OR status LIKE CONCAT('%', #{searchword}, '%')
 			)
-		ORDER BY io_date 
+		ORDER BY io_date DESC
 		LIMIT #{cri.startPage}, #{cri.pageSize}
 	</select>
   	
@@ -237,7 +239,7 @@
   			io_date,
   			status 
   		FROM stock_info 
-  		ORDER BY io_date 
+  		ORDER BY io_date DESC
   		LIMIT #{startPage},#{pageSize}
   	</select>
   	<!-- stock_info table 조회 -->
@@ -290,19 +292,21 @@
   	<!-- 특정 품목 stock_info 테이블 조회  -->
   	<select id="getStockInfoByIdentifyCode" resultType="com.eatit.warehouseDomain.StockInfoVO">
   		SELECT  
-  			identify_code,
-  			warehouse_no,
-  			io_classification,
-  			category,
-  			product_name 'name',
-  			io_quantities,
-  			product_unit 'unit',
-  			price,
-  			expiry_date,
-  			io_date,
-  			status 
-  		FROM stock_info
-  		WHERE identify_code = #{identify_code}
+			identify_code,
+			warehouse_no,
+			si.io_classification,
+			si.category,
+			si.product_name 'name',
+			io_quantities,
+			product_unit 'unit',
+			mi.unit_quantity, 
+			si.price,
+			expiry_date,
+			io_date,
+			status 
+		FROM stock_info si 
+		JOIN masterdata_information mi ON si.product_name = mi.name 
+		WHERE identify_code = #{identify_code}
   	</select>
   	
   	<select id="getStockInfoByIdentifyCode2" parameterType="java.util.Map" resultType="com.eatit.warehouseDomain.StockInfoVO">
@@ -360,11 +364,11 @@
 	</select>
 	
 	<insert id="insertStock">
-		INSERT INTO stock(product_code,warehouse_no,category,product_name,product_unit,expiry_date,quantity) 
-		VALUES(#{product_code},#{warehouse_no},#{category},#{product_name},#{product_unit},#{expiry_date},#{quantity})
+		INSERT INTO stock(identify_code,product_code,warehouse_no,category,product_name,product_unit,expiry_date,quantity) 
+		VALUES(#{identify_code},#{product_code},#{warehouse_no},#{category},#{product_name},#{product_unit},#{expiry_date},#{quantity})
 	</insert> 
 	
-	<update id="updateStockInfoStatusWhenApprovalSuccess">
+	<update id="updateStockInfoStatusWhenApprovalSuccess" >
 		UPDATE stock_info 
 		SET status ='승인' 
 		WHERE identify_code = #{identify_code}  
@@ -392,10 +396,54 @@
   	</update>
   	
   	<select id="selectStockOrderByExpiryDate" resultType="StockVO">
-  		SELECT * FROM stock
+  		SELECT * FROM stock 
+  		WHERE product_code = #{productCode}
   		ORDER BY expiry_date
   	</select>
   	
+  	<select id="selectQuantityOrderByExpiryDateList" resultType="int">
+  		SELECT io_quantities  
+		FROM stock_info 
+		WHERE identify_code  = #{identify_code} 
+		ORDER BY expiry_date;
+  	</select>
+  	
+  	<update id="updateQuantity">
+  		UPDATE stock
+  		SET quantity = #{quantity}
+  		WHERE identify_code = #{identify_code}
+  	</update>
+  	
+  	<insert id="insertStockIntoPoductionWarehouse">
+  		INSERT INTO production_warehouse(product_name,unit,unit_quantity,total)
+  		VALUES(#{product_name},#{unit},#{unit_quantity},#{total})
+  	</insert>
+  	
+  	<update id="updateStockIntoPoductionWarehouse">
+  		UPDATE production_warehouse
+  		SET total = #{total}
+  		WHERE product_name = #{product_name}
+  	</update>
+  	
+  	<delete id="deleteStock" parameterType="java.util.Map">
+  		DELETE FROM stock
+  		WHERE identify_code IN
+  			<foreach collection="identifyCode" item="code" open="(" separator="," close=")">
+  				#{code}
+  			</foreach>
+  	</delete>
+  	
+  	<select id="selectNameCheck" resultType="int">
+  		SELECT COUNT(*)
+  		FROM production_warehouse
+  		WHERE product_name = #{product_name}
+  	</select>
+  	
+  	<select id="selectNameTotal" resultType="production_warehouseVO">
+  		SELECT total
+  		FROM production_warehouse
+  		WHERE product_name = #{product_name}
+  	</select>
   	
   </mapper>	  
   

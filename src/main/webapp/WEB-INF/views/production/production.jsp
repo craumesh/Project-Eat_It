@@ -48,7 +48,14 @@
 								<td class="text-center">
 								<fmt:formatDate value="${history.operating_time}" pattern="MM월 dd일 HH:mm" />
 								</td>
-								<td class="text-center">${history.product_time != null ? history.product_time : "00:00:00"}</td>
+								<td class="text-center"><c:choose>
+							        <c:when test="${history.product_time eq 0}">
+							            00:00:00
+							        </c:when>
+							        <c:otherwise>
+							           <fmt:formatDate value="${history.timeto_c}" pattern="MM월 dd일 HH:mm" />
+							        </c:otherwise>
+							    </c:choose></td>
 								</c:forEach>
 									<td class="text-center"><span id="status-badge"
 										class="badge badge-sm bg-gradient-success"

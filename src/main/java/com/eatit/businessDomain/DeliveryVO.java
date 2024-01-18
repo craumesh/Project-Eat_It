@@ -17,4 +17,16 @@ public class DeliveryVO {
 	private Integer confirm_employee_no;
 	private String delivery_status;
 	
+	// JOIN 데이터
+	private String product_name;
+	private String photo_paths;
+	private Integer price;
+	private Integer quantity;
+	private String company_name;
+	private String company_tel;
+	private String company_zip_code;
+	private String company_address;
+	private String company_address_detail;
+	private String comments;
+	
 }

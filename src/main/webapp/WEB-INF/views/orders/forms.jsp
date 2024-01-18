@@ -62,7 +62,7 @@
 												</div>
 											</td>								
 											<td>											
-												<input type="hidden" id="company_no" name="company_no" value="${companyVO.company_no }">												
+												<input type="hidden" id="company_no" name="company_no" value="">												
 												<div class="d-flex px-2 py-1">
 													<div>
 														<img src="" id="companyImg" class="avatar avatar-sm me-3" alt="">
@@ -130,7 +130,7 @@
 												</div>
 											</td>
 											<td class="align-middle text-center">
-												<h6 class="text-sm font-weight-bold pt-3" id="outputTotalPrice">₩--</h6>
+												<h6 class="text-sm font-weight-bold pt-3" id="outputTotalPrice">₩0</h6>
 											</td>
 										</tr>
 									</tbody>						
@@ -175,12 +175,12 @@
 
 	// 거래처 검색창 
     function openSearchCompany() {
-        window.open('/orders/companys', '_blank', 'width=600,height=680');
+        window.open('/orders/companys', '_blank', 'width=690,height=680');
     }
 
     // 상품 검색창
     function openSearchProduct() {
-        window.open('/orders/products', '_blank', 'width=600,height=710');
+        window.open('/orders/products', '_blank', 'width=690,height=710');
     }
     
     // 거래처 변경
@@ -212,7 +212,12 @@
 	        var quantity = $(this).val();
 
             if (quantity < 0) {
-                alert('수량은 음수일 수 없습니다.');
+            	swal({
+    				title: "1개 이상 주문이 가능합니다.",
+    				text: "음수는 입력할 수 없습니다.",
+    				icon: "error",
+    				buttons: "실패",
+    			})
                 $(this).val(0);
             }else {
                 var price = parseFloat($("#prdPrice").text().replace(/[^0-9.-]+/g, ""));

@@ -45,10 +45,10 @@
 							<td class="fs-5"> ${status.ordersVOlist[0].quantity != null ? status.ordersVOlist[0].quantity : "OOOO"} EA </td>
 							</tr>
 							
-							<tr>
-							<th class="text-center fs-5"> 생산 완료 :  </th>
-							<td class="fs-5">${status.infolist[0].product_time != null ? status.infolist[0].product_time : "00:00:00" } </td>
-							</tr>
+<!-- 							<tr> -->
+<!-- 							<th class="text-center fs-5"> 생산 완료 :  </th> -->
+<%-- 							<td class="fs-5">${status.infolist[0].product_time != null ? status.infolist[0].product_time : "00:00:00" } </td> --%>
+<!-- 							</tr> -->
 					</tbody>
 						</table>
 		</form>

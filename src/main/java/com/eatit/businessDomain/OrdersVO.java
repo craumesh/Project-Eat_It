@@ -25,8 +25,10 @@ public class OrdersVO {
 	private String product_name; 
 	private String photo_paths; 
 	private String name; 
+	private String company_zip_code; 
 	private String company_address; 
 	private String company_address_detail; 
 	private Integer stock_quantity;
+	private Integer price;
 	
 }

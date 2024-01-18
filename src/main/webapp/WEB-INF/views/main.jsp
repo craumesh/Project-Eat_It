@@ -20,9 +20,9 @@
                 <p class="text-sm mb-0 text-capitalize">
                 	<script>
                   		document.write(new Date().getFullYear())
-                	</script> 남품액
+                	</script> 납품액
                 </p>
-                <h4 class="mb-0">190,245,000원</h4>
+                <h4 id="nowYearPrice" class="mb-0 min-vh-3"></h4>
               </div>
             </div>
             <div class="card-footer p-3">
@@ -41,7 +41,7 @@
                   		document.write(new Date().getFullYear())
                 	</script> 납품량
                 </p>
-                <h4 class="mb-0">2,300개</h4>
+                <h4 id="nowYearQuantity" class="mb-0 min-vh-3"></h4>
               </div>
             </div>
             <div class="card-footer p-3">
@@ -55,8 +55,8 @@
                 <i class="material-icons opacity-10">weekend</i>
               </div>
               <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">이번달 남품액</p>
-                <h4 class="mb-0">6,900,000원</h4>
+                <p class="text-sm mb-0 text-capitalize">이번달 납품액</p>
+                <h4 id="nowMonthPrice" class="mb-0 min-vh-3"></h4>
               </div>
             </div>
             <div class="card-footer p-3">
@@ -70,8 +70,8 @@
                 <i class="material-icons opacity-10">weekend</i>
               </div>
               <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">이번달 남품량</p>
-                <h4 class="mb-0">320개</h4>
+                <p class="text-sm mb-0 text-capitalize">이번달 납품량</p>
+                <h4 id="nowMonthQuantity" class="mb-0 min-vh-3"></h4>
               </div>
             </div>
             <div class="card-footer p-3">
@@ -91,11 +91,11 @@
             </div>
             <div class="card-body">
               <h6 class="mb-0 ">연도별 납품량</h6>
-              <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) 전년도 대비 </p>
+              <p class="text-sm "><span class="font-weight-bolder"></span> </p>
               <hr class="dark horizontal">
               <div class="d-flex ">
                 <i class="material-icons text-sm my-auto me-1">schedule</i>
-                <p class="mb-0 text-sm"> 수정 일자 </p>
+                <p id="yearRecentQuantity" class="mb-0 text-sm"> </p>
               </div>
             </div>
           </div>
@@ -111,11 +111,11 @@
             </div>
             <div class="card-body">
               <h6 class="mb-0 ">월별 납품액 </h6>
-              <p class="text-sm "> (<span class="font-weight-bolder">-5%</span>) 전달 대비</p>
+              <p class="text-sm "><span class="font-weight-bolder"></span></p>
               <hr class="dark horizontal">
               <div class="d-flex ">
                 <i class="material-icons text-sm my-auto me-1">schedule</i>
-                <p class="mb-0 text-sm"> 수정 일자 </p>
+                <p id="monthRecentPrice" class="mb-0 text-sm"> </p>
               </div>
             </div>
           </div>
@@ -131,11 +131,11 @@
             </div>
             <div class="card-body">
               <h6 class="mb-0 ">월별 납품량</h6>
-              <p class="text-sm "> (<span class="font-weight-bolder">+5%</span>) 전달 대비</p>
+              <p class="text-sm "><span class="font-weight-bolder"></span></p>
               <hr class="dark horizontal">
               <div class="d-flex ">
                 <i class="material-icons text-sm my-auto me-1">schedule</i>
-                <p class="mb-0 text-sm">수정 일자</p>
+                <p id="monthRecentQuantity" class="mb-0 text-sm"></p>
               </div>
             </div>
           </div>
@@ -190,7 +190,7 @@
 						</div>
 					   </td>
 					   <td class="align-middle text-center text-sm ">
-							<h6><a href="#">전체 공지글입니다.</a></h6>						 
+							<h6><a href="#">사유 없는 결근은 우리에겐 주적</a></h6>						 
 					   </td>
 					   <td class="align-middle text-center text-sm">
 						  <p class="text-xs font-weight-bold mb-0">20</p>
@@ -210,7 +210,7 @@
 						</div>
 					   </td>
 					   <td class="align-middle text-center text-sm ">
-							<h6><a href="#">인사 공지글입니다.</a></h6>						 
+							<h6><a href="#">업무 지침 사항</a></h6>						 
 					   </td>
 					   <td class="align-middle text-center text-sm">
 						  <p class="text-xs font-weight-bold mb-0">53</p>
@@ -230,7 +230,7 @@
 						</div>
 					   </td>
 					   <td class="align-middle text-center text-sm ">
-							<h6><a href="#">자재 공지글입니다.</a></h6>						 
+							<h6><a href="#"></a>자재 위생관련 근무지침</h6>						 
 					   </td>
 					   <td class="align-middle text-center text-sm">
 						  <p class="text-xs font-weight-bold mb-0">15</p>
@@ -250,7 +250,7 @@
 						</div>
 					   </td>
 					   <td class="align-middle text-center text-sm ">
-							<h6><a href="#">생산 공지글입니다.</a></h6>						 
+							<h6><a href="#">생산 효율성 증가를 위한 지침</a></h6>						 
 					   </td>
 					   <td class="align-middle text-center text-sm">
 						  <p class="text-xs font-weight-bold mb-0">32</p>
@@ -270,7 +270,7 @@
 						</div>
 					   </td>
 					   <td class="align-middle text-center text-sm ">
-							<h6><a href="#">창고 공지글입니다.</a></h6>						 
+							<h6><a href="#">재고 입/출고 승인 시 주의사항</a></h6>						 
 					   </td>
 					   <td class="align-middle text-center text-sm">
 						  <p class="text-xs font-weight-bold mb-0">18</p>
@@ -290,7 +290,7 @@
 						</div>
 					   </td>
 					   <td class="align-middle text-center text-sm ">
-							<h6><a href="#">납품  공지글입니다.</a></h6>						 
+							<h6><a href="#">납기일 철저히 준수할 것</a></h6>						 
 					   </td>
 					   <td class="align-middle text-center text-sm">
 						  <p class="text-xs font-weight-bold mb-0">5</p>
@@ -310,7 +310,7 @@
 						</div>
 					   </td>
 					   <td class="align-middle text-center text-sm ">
-							<h6><a href="#">설비 공지글입니다.</a></h6>						 
+							<h6><a href="#">작업 전 안전교육 필수</a></h6>						 
 					   </td>
 					   <td class="align-middle text-center text-sm">
 						  <p class="text-xs font-weight-bold mb-0">29</p>
@@ -476,93 +476,158 @@
   	<%@ include file="./include/footer.jsp" %>
   	<%@ include file="./include/js.jsp" %>
   <script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
+  var ctxLabelArr = [];
+  var ctxDataArr = [];
+  var ctx2LabelArr = [];
+  var ctx2DataArr = [];
+  var ctx3LabelArr = [];
+  var ctx3DataArr = [];
+  
+  function formatNumberWithCommas(number) {
+	    return number.toLocaleString();
+	}
+  
+  $(document).ready(function() {
+	  $.ajax({
+          url: '/',
+			method : 'POST',
+			dataType: 'json',
+			success : function(data) {
+				console.log('성공:', data);
+				$("#nowYearPrice").text(formatNumberWithCommas(data.nowYearOrdersPrice.price)+"원");
+				$("#nowMonthPrice").text(formatNumberWithCommas(data.nowMonthOrdersPrice)+"원");
+				$("#nowMonthQuantity").text(formatNumberWithCommas(data.nowmonthOrdersQuantity)+"개");
+				$("#nowYearQuantity").text(formatNumberWithCommas(data.nowYearOrdersQuantity)+"개");
+				$("#yearRecentQuantity").text(data.recentUpdate.update_date);
+				$("#monthRecentPrice").text(data.recentUpdate.update_date);
+				$("#monthRecentQuantity").text(data.recentUpdate.update_date);
+				
+				
+				
+				var yearsOrdersMap = data.yearsOrdersMap;
+				console.log(yearsOrdersMap);
+				for (var key in yearsOrdersMap) {
+					var value = yearsOrdersMap[key];
+					ctxLabelArr.push(key);
+					ctxDataArr.push(value);					
+				}	
 
-    new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ['2020', '2021', '2022', '2023'],
-        datasets: [{
-          label: "전체 납품량",
-          tension: 0.4,
-          borderWidth: 0,
-          borderRadius: 4,
-          borderSkipped: false,
-          backgroundColor: "rgba(255, 255, 255, .8)",
-          data: [500, 1200, 1700, 2300],
-          maxBarThickness: 6
-        }, ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              suggestedMin: 0,
-              suggestedMax: 500,
-              beginAtZero: true,
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-              color: "#fff"
-            },
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
+				var monthOrdersPriceMap = data.monthOrdersPriceMap;
+				console.log(monthOrdersPriceMap);
+				for (var key in monthOrdersPriceMap) {
+					var value = monthOrdersPriceMap[key];
+					ctx2LabelArr.push(key);
+					ctx2DataArr.push(value);					
+				}	
+				
+				var monthOrdersQuantityMap = data.monthOrdersQuantityMap;
+				console.log(monthOrdersQuantityMap);
+				for (var key in monthOrdersQuantityMap) {
+					var value = monthOrdersQuantityMap[key];
+					ctx3LabelArr.push(key);
+					ctx3DataArr.push(value);					
+				}	
+				
+				ctxInsert();
+				ctx2Insert();
+				ctx3Insert();
+			},
+			error : function(error) {
+				console.log('실패:', error);
+			}
+		});  
+	  
+  });
+  
+function ctxInsert(){
+	var ctx = document.getElementById("chart-bars").getContext("2d");
 
+	new Chart(ctx, {
+	  type: "bar",
+	  data: {
+	    labels: ctxLabelArr,
+	    datasets: [{
+	      label: "전체 납품량",
+	      tension: 0.4,
+	      borderWidth: 0,
+	      borderRadius: 4,
+	      borderSkipped: false,
+	      backgroundColor: "rgba(255, 255, 255, .8)",
+	      data: ctxDataArr,
+	      maxBarThickness: 6
+	    }, ],
+	  },
+	  options: {
+	    responsive: true,
+	    maintainAspectRatio: false,
+	    plugins: {
+	      legend: {
+	        display: false,
+	      }
+	    },
+	    interaction: {
+	      intersect: false,
+	      mode: 'index',
+	    },
+	    scales: {
+	      y: {
+	        grid: {
+	          drawBorder: false,
+	          display: true,
+	          drawOnChartArea: true,
+	          drawTicks: false,
+	          borderDash: [5, 5],
+	          color: 'rgba(255, 255, 255, .2)'
+	        },
+	        ticks: {
+	          suggestedMin: 0,
+	          suggestedMax: 500,
+	          beginAtZero: true,
+	          padding: 10,
+	          font: {
+	            size: 14,
+	            weight: 300,
+	            family: "Roboto",
+	            style: 'normal',
+	            lineHeight: 2
+	          },
+	          color: "#fff"
+	        },
+	      },
+	      x: {
+	        grid: {
+	          drawBorder: false,
+	          display: true,
+	          drawOnChartArea: true,
+	          drawTicks: false,
+	          borderDash: [5, 5],
+	          color: 'rgba(255, 255, 255, .2)'
+	        },
+	        ticks: {
+	          display: true,
+	          color: '#f8f9fa',
+	          padding: 10,
+	          font: {
+	            size: 14,
+	            weight: 300,
+	            family: "Roboto",
+	            style: 'normal',
+	            lineHeight: 2
+	          },
+	        }
+	      },
+	    },
+	  },
+	});
+}
 
-    var ctx2 = document.getElementById("chart-line").getContext("2d");
+function ctx2Insert(){
+	var ctx2 = document.getElementById("chart-line").getContext("2d");
 
     new Chart(ctx2, {
       type: "line",
       data: {
-        labels: ['2023-08', '2023-09', '2023-10', '2023-11', '2023-12'],
+        labels: ctx2LabelArr,
         datasets: [{
           label: "이번달 납품액",
           tension: 0,
@@ -575,7 +640,7 @@
           borderWidth: 4,
           backgroundColor: "transparent",
           fill: true,
-          data: [5900000, 4900000, 6800000,7300000,6900000],
+          data: ctx2DataArr ,
           maxBarThickness: 6
 
         }],
@@ -639,13 +704,15 @@
         },
       },
     });
+}
 
-    var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
+function ctx3Insert() {
+	var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
 
     new Chart(ctx3, {
       type: "line",
       data: {
-        labels: ['2023-08', '2023-09', '2023-10', '2023-11', '2023-12'],
+        labels: ctx3LabelArr,
         datasets: [{
           label: "이번달 납품량",
           tension: 0,
@@ -657,7 +724,7 @@
           borderWidth: 4,
           backgroundColor: "transparent",
           fill: true,
-          data: [100, 200,500,300,320],
+          data: ctx3DataArr,
           maxBarThickness: 6
 
         }],
@@ -721,5 +788,6 @@
         },
       },
     });
+}
   </script>
 </html>

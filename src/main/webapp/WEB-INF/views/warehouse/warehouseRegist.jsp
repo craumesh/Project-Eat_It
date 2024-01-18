@@ -43,7 +43,7 @@
 								<table class="table align-items-center mb-0">
 									<thead>
 										<tr>
-											<th class="text-uppercase text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3"" >관리자 이름</th>
+											<th class="text-uppercase text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">관리자 이름</th>
 											<th class="text-uppercase text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">연락처</th>
 											<th class="text-uppercase text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">이메일</th>
 										</tr>
@@ -143,7 +143,24 @@
 </div>
 <%@ include file="../include/footer.jsp"%>
 <script>
+
 function registAlert(){
+	
+	 // 창고명과 위치명을 유효성 검사
+    var warehouseName = document.forms["registForm"]["warehouse_name"].value.trim();
+    var locationName = document.forms["registForm"]["location_name"].value.trim();
+
+    if (warehouseName === '' || locationName === '') {
+        // SweetAlert 또는 다른 경고 메커니즘을 사용하여 오류 메시지 표시
+        swal({
+            text: "창고명과 위치명을 입력하세요.",
+            icon: "error",
+            buttons: false,
+            timer: 1500 // 1.5초 동안 오류 메시지를 표시
+        });
+        return;
+    }
+	
 	swal({
 		text: "창고 등록 완료",
 		icon: "success",

@@ -65,13 +65,27 @@ public class MaterialServiceImpl implements MaterialService {
 		logger.debug("Service(getSearchList) -> DAO 호출");
 		return materialDAO.selectSearchList(params, cri, searchword);
 	}
+	
+	@Override
+	public List<materialaddVO> getMaterialaddList(Map<String, Object> params, Criteria cri, String searchword) {
+		logger.debug("Service(getMaterialaddList) -> DAO 호출");
+		return materialDAO.selectSearchMaterialAddList(params, cri, searchword);
+	}
+	
 
+	@Override
+	public List<MaterialOrderVO> getMaterialorderList(Map<String, Object> params, Criteria cri, String searchword) {
+		logger.debug("Service(getMaterialorderList) -> DAO 호출");
+		return materialDAO.selectSearchMaterialorderList(params, cri, searchword);
+	}
+	
+	
 	@Override
 	public void deleteMaterial(String string) {
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	@Override
 	public MaterialVO findMaterialById(int materialId) {
 		// TODO Auto-generated method stub
@@ -85,11 +99,6 @@ public class MaterialServiceImpl implements MaterialService {
 		return 0;
 	}
 
-//	@Override
-//	public void setHrRegActive(MaterialVO vo) {
-//		// TODO Auto-generated method stub
-//
-//	}
 
 	@Override
 	public List<materialaddVO> getmaterialaddList() {
@@ -104,31 +113,18 @@ public class MaterialServiceImpl implements MaterialService {
 	}
 	
 	@Override
-	public void createMatereialOrder(MaterialOrderVO pvo) throws Exception {
-		logger.debug("Service: createMatereialOrder(MaterialOrderVO pvo)");
+	// 발주 등록
+	public void insertMaterialOrder(MaterialOrderVO pvo) {
+		logger.debug("S - insertMaterialOrder(MaterialOrderVO pvo)");
 		materialDAO.insertMaterialOrder(pvo);
 	}
 
-	@Override
-	public MaterialOrderVO getMaterialorderDetail(int materialod_id) throws Exception {
-		logger.debug("Service: getMaterialOrderDetail(String materialod_id)");
-		return materialDAO.getMaterialOrderDetail(materialod_id);
-	}
-	
-	@Override
-	// 창고 수정
-	public void Materialupdate(MaterialOrderVO vo) {
-		materialDAO.updateDetailInfo(vo);
-	}
-	
 	@Override
 	// 발주 삭제
 	public void deleteMaterial(int[] materialod_id) {
 		logger.debug("S - deleteMaterial(int[] materialod_id)");
 		materialDAO.deleteMaterial(materialod_id);
 	}
-	
-
 	
     @Override
     public List<MaterialOrderVO> Materialorder() {
@@ -146,6 +142,36 @@ public class MaterialServiceImpl implements MaterialService {
 	public MaterialVO getMaterialContent(MaterialVO vo) {
 		logger.debug("Service(getMaterialContent) -> DAO 호출");
 		return materialDAO.selectMaterialContent(vo);
+	}
+
+	@Override
+	public void Materialupdate(MaterialOrderVO vo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<MaterialVO> getTotalCount(Criteria cri) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getFindMaterialListCount(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<MaterialVO> findMaterialList(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getSearchCount(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 

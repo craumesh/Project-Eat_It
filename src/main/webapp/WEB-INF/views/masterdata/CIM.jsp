@@ -33,7 +33,9 @@
 					<form action="/masterdata/delRequires" id="batchForm" method="post">
 						<input type="hidden" id="query-forDelSubmit" name="query">
 						<input type="hidden" id="filter-forDelSubmit" name="filter">
-						<input type="hidden" id="page-forDelSubmit" name="page" value="${empty page ? 1 : page }">
+						<c:if test="${empty page }">
+							<input type="hidden" id="page-forDelSubmit" name="page" value="1">
+						</c:if>
 						<table id="required_table" class="table table-hover align-items-center mb-0">
 							<thead>
 								<tr>
@@ -86,7 +88,7 @@
 		</div>
 		<div class="row mb-2">
 			<div class="col-sm-5">
-				<div class="ms-5">Showing ${pageVO.startPage } to ${pageVO.endPage } of 미구현 entries</div>
+				<div class="ms-5">Showing ${pageVO.startPage } to ${pageVO.endPage }</div>
 			</div>
 			<div class="col-sm-5">
 				<ul class="pagination">
@@ -137,6 +139,9 @@
 									<td class="fs-5 ps-5">
 										<input type="text" id="code_forEdit" name="code" class="form-control" readonly="readonly">
 										<input type="hidden" id="product_no_forEdit" name="product_no" value="product_no">
+										<c:if test="${empty page }">
+											<input type="hidden" id="page-forEdit" name="page" value="1">
+										</c:if>
 									</td>
 								</tr>
 								<tr>
@@ -462,6 +467,8 @@ $(document).ready(function() {
 
 	    $("<button>").attr("type", "button").addClass("btn bg-gradient-warning btn-sm fs-6 py-0 px-2 mb-0 removebtn").text("-").appendTo(buttonTd);
 
+	    applyValidation(newRow.find('.requiredGroup'));
+	    
 	    $("#edit-table tbody").append(newRow);
 	}
 
@@ -511,5 +518,17 @@ $(document).ready(function() {
     function closeEditModal() {
         document.getElementById("editModal").style.display = "none";
         location.reload();
+    }
+    
+    
+    function applyValidation(element) {
+        element.on("input", function(e) {
+            var value = $(this).val();
+            if (!/^[1-9]\d*$/.test(value)) {
+                $(this).val($(this).data("prevValue") || "");
+            } else {
+                $(this).data("prevValue", value);
+            }
+        });
     }
 </script>

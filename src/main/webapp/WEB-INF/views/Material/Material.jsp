@@ -47,9 +47,34 @@
 											<tr>
 												<td>
 													<div class="input-group input-group-dynamic mb-4">
-														<input type="text" name="product_no" class="form-control"
-															placeholder="품목정보번호" aria-label="품목정보번호"
-															aria-describedby="basic-addon1">
+														<select name="product_no" class="input-group-dynamic">
+															<option value="6">설탕</option>
+															<option value="7">소금</option>
+															<option value="8">우유</option>
+															<option value="9">크림</option>
+															<option value="10">박력분</option>
+															<option value="11">코코아분말</option>
+															<option value="12">강력분</option>
+															<option value="14">식용유</option>
+															<option value="15">이스트</option>
+															<option value="17">딸기</option>
+															<option value="18">두리안</option>
+															<option value="19">민트첨가물</option>
+															<option value="28">치즈</option>
+															<option value="36">초콜렛칩</option>
+															<option value="37">흑설탕</option>
+															<option value="38">전란액</option>
+															<option value="39">버터</option>
+															<option value="40">정제수</option>
+															<option value="41">물엿</option>
+															<option value="42">딸기잼</option>
+															<option value="43">블루베리잼</option>
+															<option value="44">쇼트닝</option>
+															<option value="45">크림치즈</option>
+															<option value="46">초코소스</option>
+															<option value="47">사과잼</option>
+															<option value="62">밀가루</option>
+														</select>
 													</div>
 												</td>
 												<td>
@@ -61,7 +86,7 @@
 												</td>
 												<td>
 													<div class="input-group input-group-dynamic mb-4">
-														<input type="text" name="expiry_date" class="form-control"
+														<input type="date" name="expiry_date" class="form-control"
 															placeholder="유통 기한" aria-label="유통 기한"
 															aria-describedby="basic-addon1">
 													</div>

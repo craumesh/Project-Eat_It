@@ -130,7 +130,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 
 	@Override
 	public int updateForm(OrdersVO ovo) {
-		logger.debug("DAO: updateForm(PurchaseVO ovo)");
+		logger.debug("DAO: updateForm(OrdersVO ovo)");
 		return SqlSession.update(NAMESPACE + ".updateForm", ovo);
 	}
 	@Override
@@ -150,7 +150,35 @@ public class OrdersDAOImpl implements OrdersDAO {
 		logger.debug("DAO : selectproductcount");
 		return SqlSession.selectOne(NAMESPACE +".selectproductcount");
 	}
-	
-	
-	
+
+	@Override
+	public void updateOrderStatusToShippingPreparation(Integer order_id) {
+		logger.debug("DAO : updateOrderStatusToShippingPreparation(order_id)");
+		SqlSession.update(NAMESPACE + ".updateOrderStatusToShippingPreparation", order_id);
+	}
+
+	@Override
+	public void updateOrderStatusToDelivering(Integer delivery_id) {
+		logger.debug("DAO : updateOrderStatusToDelivering(delivery_id)");
+		SqlSession.update(NAMESPACE + ".updateOrderStatusToDelivering", delivery_id);
+	}
+
+	@Override
+	public void updateOrderComplete(Integer delivery_id) {
+		logger.debug("DAO : updateOrderComplete(delivery_id)");
+		SqlSession.update(NAMESPACE + ".updateOrderComplete", delivery_id);
+	}
+
+	@Override
+	public void updateOrderStatusToReleaseComplete(Integer order_id) {
+		logger.debug("DAO : updateOrderStatusToReleaseComplete(order_id)");
+		SqlSession.update(NAMESPACE + ".updateOrderStatusToReleaseComplete", order_id);
+	}
+
+	@Override
+	public void updateOrderStatusToProducing(Integer order_id) {
+		logger.debug("DAO : updateOrderStatusToProducing(order_id)");
+		SqlSession.update(NAMESPACE + ".updateOrderStatusToProducing", order_id);
+	}
+
 }

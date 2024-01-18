@@ -48,22 +48,22 @@
               <div class="card-body">
                 <form role="form" class="text-start" method="post">
                   <div class="input-group input-group-outline my-3">
-                    <input type="text" class="form-control" name="id" placeholder="아이디 입력">
+                    <input type="text" class="form-control" name="id" placeholder="아이디 입력" required>
                   </div>
                   <div class="input-group input-group-outline mb-3">
-                    <input type="password" class="form-control" name="pw" placeholder="패스워드 입력">
+                    <input type="password" class="form-control" name="pw" placeholder="패스워드 입력" required>
                   </div>
                   <div class="input-group input-group-outline mb-3">
-                    <input type="text" class="form-control" name="name" placeholder="이름 입력">
+                    <input type="text" class="form-control" name="name" placeholder="이름 입력" required>
                   </div>
                   <div class="input-group input-group-outline mb-3">
-                    <input type="email" class="form-control" name="email" placeholder="이메일 입력">
+                    <input type="email" class="form-control" name="email" placeholder="이메일 입력" required>
                   </div>
                   <div class="input-group input-group-outline mb-3">
-                    <input type="tel" class="form-control" name="contact" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" placeholder="휴대전화번호 입력 ex)010-1234-1234" >
+                    <input type="tel" class="form-control" name="contact" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" placeholder="휴대전화번호 입력 ex)010-1234-1234" required>
                   </div>
                  <div class="input-group input-group-outline mb-3">
-                    <input type="text" class="form-control" id="sample5_address" placeholder="주소" name="address" style="border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; " readonly>
+                    <input type="text" class="form-control" id="sample5_address" placeholder="주소" name="address" style="border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; " readonly="readonly" required="required">
 					<button type="button" class="btn bg-gradient-dark mb-0" onclick="sample5_execDaumPostcode()">주소 검색</button>
                   </div>
                   <div class="text-center">

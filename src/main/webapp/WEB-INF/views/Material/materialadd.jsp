@@ -6,58 +6,41 @@
 <!-- 본문 시작 -->
 
 <!-- Search and Add Section -->
-<div class="col-11 mx-auto">
-	<div class="card my-3 mx-auto pt-5 px-6 pb-2">
+<div class="col-12">
+	<div class="card my-4 mx-4">
 		<div class="card-header p-0 position-relative mx-3 z-index-2">
-
 			<div
-				class="bg-gradient-primary shadow-primary border-radius-lg pt-3 pb-3 pe-3 d-flex">
+				class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
 				<h3
-					class="text-white text-capitalize ps-5 align-items-center mb-0 py-1">원자재
+					class="text-white text-capitalize ps-5 align-items-center mt-2 py-1">원자재
 					입/출고 관리</h3>
-				<div
-					class="ms-md-auto bg-white rounded p-2 d-flex align-items-center">
-					<div class="align-items-center d-flex flex-column">
-						<div class="input-group input-group-outline">
-							<label class="form-label">검색어를 입력하세요</label> <input type="text"
-								id="searchword" name="searchword" class="form-control"
-								value="${param.searchword }">
-						</div>
-					</div>
-					<div class="align-items-center d-flex flex-column py-1">
-						<button id="searchbtn"
-							class="btn btn-outline-primary btn-sm mb-0 py-1 ms-2">검색</button>
-					</div>
-				</div>
-			</div>
-		</div>
 
+			</div>
 		<!-- Materials Table -->
-		<div class="my-3 p-3 bg-white rounded shadow-sm">
-			<h6 class="border-bottom border-gray pb-2 mb-0">입/출고 목록</h6>
-			<div class="table-responsive">
-				<table class="table table-bordered table-hover">
+		<div class="card-body px-0 pb-2 z-index-1 ">
+			<div class="table-responsive p-0 min-vh-65 overflow-x-hidden">
+				<table class="table align-items-center mb-0">
 					<thead>
 						<tr>
-							<th scope="col" class="text-center">자재 입/출고 기록 번호</th>
-							<th scope="col" class="text-center">자재 입/출고 기록 일자</th>
-							<th scope="col" class="text-center">품목정보번호</th>
-							<th scope="col" class="text-center">창고번호</th>
-							<th scope="col" class="text-center">유통 기한</th>
-							<th scope="col" class="text-center">자재 입/출고 수량</th>
-							<th scope="col" class="text-center">입/출고</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">자재 입/출고 기록 번호</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">자재 입/출고 기록 일자</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">품목정보번호</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">창고번호</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">유통 기한</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">자재 입/출고 수량</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">입/출고</th>
 						</tr>
 					</thead>
 					<tbody id="materialadd">
 						<c:forEach var="materialaddList" items="${materialaddList}">
 							<tr>
-								<td class="text-center">${materialaddList.materialadd_no}</td>
-								<td class="text-center">${materialaddList.materialadd_date}</td>
-								<td class="text-center">${materialaddList.product_no}</td>
-								<td class="text-center">${materialaddList.warehouse_no}</td>
-								<td class="text-center">${materialaddList.expiry_date}</td>
-								<td class="text-center">${materialaddList.quantity}</td>
-								<td class="text-center">${materialaddList.status}</td>
+								<td class="align-middle text-center">${materialaddList.materialadd_no}</td>
+								<td class="align-middle text-center">${materialaddList.materialadd_date}</td>
+								<td class="align-middle text-center">${materialaddList.product_no}</td>
+								<td class="align-middle text-center">${materialaddList.warehouse_no}</td>
+								<td class="align-middle text-center">${materialaddList.expiry_date}</td>
+								<td class="align-middle text-center">${materialaddList.quantity}</td>
+								<td class="align-middle text-center">${materialaddList.status}</td>
 							</tr>
 						</c:forEach>
 					</tbody>
@@ -65,8 +48,8 @@
 
 				<div class="row">
 					<div class="col-sm-5">
-						<div class="ms-6">${pageVO.startPage }/ ${pageVO.endPage }
-							of page</div>
+<%-- 						<div class="ms-6">${pageVO.startPage }/${pageVO.endPage }of --%>
+<!-- 							page</div> -->
 					</div>
 					<div class="col-sm-5 mb-3">
 						<ul class="pagination">
@@ -98,6 +81,11 @@
 				</div>
 			</div>
 		</div>
+			</div>
+		</div>
+		
+
+
 
 	</div>
 </div>
@@ -190,20 +178,20 @@
 
 	function popup() {
 		const width = 900;
-		const height = 900;
-		// const left = 500;
-		// const top = 500;
+		const height = 400;
+		 const left = 500;
+		 const top = 500;
 
-		// 현재 창의 중앙 좌표 계산
-		//	const left = (window.innerWidth - width) / 2
-		//			+ window.screenLeft;
-		//				const top = (window.innerHeight - height) / 2
-		//		+ window.screenTop;
+// 		// 현재 창의 중앙 좌표 계산
+// 			const left = (window.innerWidth - width) / 2
+// 					+ window.screenLeft;
+// 						const top = (window.innerHeight - height) / 2
+// 				+ window.screenTop;
 
 		console.log(`width=${width}`);
 		console.log(width);
 		// 팝업 창 열기
 		window.open("/Material/Material", "popup",
-				" width = 900px, height = 900px, left = 900px, top = 900px ");
+				" width = 900px, height = 400PX, left = 500px, top = 500px ");
 	}
 </script>

@@ -13,8 +13,9 @@
   <result property="employee_no" column="employee_no"/>
   <result property="recipe_no" column="recipe_no"/>
   <result property="production_time" column="production_time"/>
-  <!-- <collection property="" resultMap=""></collection> -->
   </resultMap>
+  
+  
 
   <!-- 설비 페이징 처리 갯수 -->
   <select id="machinetotalCount" resultType="int">
@@ -44,9 +45,70 @@
 	FROM masterdata_information
 	where category = '자재'
   	</select>
+  	
+  	<!-- 이름 으로 조회한 제품 번호 -->
+  	<select id="nameproduct_no" resultType="com.eatit.productionDomain.masterdata_informationVO">
+  SELECT *
+  FROM masterdata_information
+  where name = #{name}
+  	</select>
+  	
+  	<!-- 해당 상품 창고 정보 조회 -->
+  	<select id="stockname" resultType="com.eatit.warehouseDomain.StockVO">
+  	SELECT *
+	FROM stock
+	where product_name = #{name};
+  	</select>
 
-  
-  
+	<!-- 생산 창고 조회 -->
+	<select id="production_warehouse" resultType="production_warehouseVO">
+	select total
+	from production_warehouse
+	where product_name = #{product_name}
+	</select>
+	
+	<!-- 생산 창고 업데이트 -->
+	<update id="updatehouse">
+	update production_warehouse
+	set total = total - #{total}
+	where product_name = #{product_name}	
+	</update>
+	
+	<select id="orderid" resultType="com.eatit.businessDomain.OrdersVO" >
+	select product_no
+	from orders
+	where order_id = ${order_id}
+	</select>
+	
+	<!-- 생산 지시 업데이트 -->
+	<insert id="start">
+	insert into production(machine_code,product_no,employee_no,production_time)
+	VALUES(#{machine_code},2,2,now())
+	</insert>
+	
+	<update id="startproduction">
+	update machine_history
+	set product_time = 600, operating_time = now(), use_history='제품생산'
+	where machine_code = #{machine_code};
+	</update>
+	
+	<update id="start_machine">
+	update machine
+	set machine_status = '생산중', order_id = #{order_id}
+	where machine_code = #{machine_code};
+	</update>
+	
+	<update id="update_machine">
+	update machine
+	set order_id = 0, machine_status = '생산 대기'
+	where machine_code = #{machine_code};
+	</update>
+	
+	<update id="update_machinehistory">
+	update machine_history
+	set product_time = 0
+	where machine_code = #{machine_code};
+	</update>
   
   </mapper>
   

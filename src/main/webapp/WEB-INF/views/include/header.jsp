@@ -128,7 +128,6 @@
 					
 					<form action="/members/profile" id="infoEdit-form" method="post">
 						<input type="hidden" name="employee_no" id="infoEmployee_no-forSubmit">
-						<input type="hidden" name="prev-url" id="infoPrev-url-forSubmit">
 						<table id="infoEdit-table" class="d-none table">
 					    	<tr>
 								<th class="fs-5">부서</th>

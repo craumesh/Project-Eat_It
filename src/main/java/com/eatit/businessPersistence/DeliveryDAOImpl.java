@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 import com.eatit.businessDomain.DeliveryVO;
 import com.eatit.mainDomain.Criteria;
 import com.eatit.memberDomain.MemberVO;
+import com.eatit.warehouseDomain.StockInfoVO;
+import com.eatit.warehouseDomain.StockVO;
 
 @Repository
 public class DeliveryDAOImpl implements DeliveryDAO {
@@ -52,6 +54,42 @@ public class DeliveryDAOImpl implements DeliveryDAO {
 	public MemberVO selectMemberInfo(String id) {
 		logger.debug("DAO: selectMemberInfo(id)");
 		return SqlSession.selectOne(NAMESPACE + ".selectMemberInfo", id);
+	}
+
+	@Override
+	public void insertDelivery(DeliveryVO dvo) {
+		logger.debug("DAO: insertDelivery(dvo)");
+		SqlSession.insert(NAMESPACE + ".insertDelivery", dvo);
+	}
+
+	@Override
+	public StockVO selectProductStock(String productName) {
+		logger.debug("DAO: selctReleaseInfo(productName)");
+		return SqlSession.selectOne(NAMESPACE + ".selectProductStock", productName);
+	}
+
+	@Override
+	public DeliveryVO selectDeliveryDetail(Integer delivery_id) {
+		logger.debug("DAO: selectDeliveryDetail(delivery_id)");
+		return SqlSession.selectOne(NAMESPACE + ".selectDeliveryDetail", delivery_id);
+	}
+
+	@Override
+	public void updateDeliveryStart(Map<String, Object> params) {
+		logger.debug("DAO: updateDeliveryStart(params)");
+		SqlSession.update(NAMESPACE + ".updateDeliveryStart", params);
+	}
+
+	@Override
+	public void updateDeliveryComplete(Integer delivery_id) {
+		logger.debug("DAO: updateDeliveryComplete(delivery_id)");
+		SqlSession.update(NAMESPACE + ".updateDeliveryComplete", delivery_id);
+	}
+
+	@Override
+	public void updateReleaseComplete(Integer order_id) {
+		logger.debug("DAO: updateReleaseComplete(order_id)");
+		SqlSession.update(NAMESPACE + ".updateReleaseComplete", order_id);
 	}
 	
 }

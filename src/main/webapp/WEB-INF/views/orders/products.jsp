@@ -65,7 +65,7 @@
 									</td>		
 									<c:choose>
 							            <c:when test="${(vo.stock_quantity / 500) * 100 >= 50}">
-							                <td class="align-middle text-center">
+							                <td class="align-middle text-center modal-act">
 												<div class="d-flex flex-sm-column align-items-center justify-content-center">
 													<span class="me-2 text-xs font-weight-bold">${vo.stock_quantity }EA</span>
 													<div>

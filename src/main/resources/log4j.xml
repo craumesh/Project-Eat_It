@@ -23,6 +23,12 @@
 	<logger name="com.eatit.mainController">
 		<level value="debug" />
 	</logger>
+	<logger name="com.eatit.mainPersistence">
+		<level value="debug" />
+	</logger>
+	<logger name="com.eatit.mainService">
+		<level value="debug" />
+	</logger>
 	<logger name="com.eatit.warehouseController">
 		<level value="debug"/>
 	</logger>

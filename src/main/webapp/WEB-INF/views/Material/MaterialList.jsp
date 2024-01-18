@@ -6,98 +6,101 @@
 <!-- 본문 시작 -->
 
 <!-- Search and Add Section -->
-<div class="col-11 mx-auto">
-	<div class="card my-3 mx-auto pt-5 px-6 pb-2">
-		<div class="card-header p-0 position-relative mx-3 z-index-2">
+<div class="col-12">
+	<div class="card my-4 mx-4">
+		<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
 			<div
-				class="bg-gradient-primary shadow-primary border-radius-lg pt-3 pb-3 pe-3 d-flex">
+				class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-4 pe-3 d-flex">
 				<h3
-					class="text-white text-capitalize ps-5 align-items-center mb-0 py-1">원자재
+					class="text-white text-capitalize ps-5 align-items-center mt-2 py-1">원자재
 					정보 관리</h3>
 				<div
 					class="ms-md-auto bg-white rounded p-2 d-flex align-items-center">
-					<div class="align-items-center d-flex flex-column">
+					<div class="align-items-center d-flex flex-column mx-1">
+
 						<div class="input-group input-group-outline">
-							<label class="form-label">검색어를 입력해주세요</label> <input type="text"
+							<label class="form-label">검색어</label> <input type="text"
 								id="searchword" name="searchword" class="form-control"
-								value="${param.searchword }">
+								value="${param.searchword }"> <input type="hidden"
+								id="filter" name="filter" value="${param.filter }">
 						</div>
+
+
 					</div>
 					<div class="align-items-center d-flex flex-column py-1">
 						<button id="searchbtn"
 							class="btn btn-outline-primary btn-sm mb-0 py-1 ms-2">검색</button>
 					</div>
+
 				</div>
+
 			</div>
 		</div>
-
-
 		<!-- Materials Table -->
-		<div class="my-3 p-3 bg-white rounded shadow-sm">
-			<h6 class="border-bottom border-gray pb-2 mb-0">자재 목록</h6>
-			<div class="table-responsive">
-				<table class="table table-bordered table-hover">
+		<div class="card-body px-0 pb-2">
+			<div class="table-responsive p-0 min-vh-65">
+				<table class="table align-items-center mb-0">
 					<thead>
 						<tr>
-							<th scope="col" class="text-center">번호</th>
-							<th scope="col" class="text-center">자재ID</th>
-							<th scope="col" class="text-center">자재코드</th>
-							<th scope="col" class="text-center">자재이름</th>
-							<th scope="col" class="text-center">자재종류</th>
-							<th scope="col" class="text-center">수량</th>
-							<th scope="col" class="text-center">창고번호</th>
-							<th scope="col" class="text-center">관리자</th>
-							<th scope="col" class="text-center">확인 날짜</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">번호</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">자재ID</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">자재코드</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">자재이름</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">자재종류</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">수량</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">창고번호</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">관리자</th>
+							<th class="text-center text-secondary font-weight-bolder col-1">확인 날짜</th>
 						</tr>
 					</thead>
 					<tbody id="materialList">
 						<tr>
-							<th scope="row" class="text-center">${index + 1}</th>
-							<td class="text-center">${materialList.material_num}</td>
-							<td class="text-center">${materialList.product_code}</td>
-							<td class="text-center">${materialList.product_name}</td>
-							<td class="text-center">${materialList.product_category_detail}</td>
-							<td class="text-center">${materialList.quantity}</td>
-							<td class="text-center">${materialList.warehouse_no}</td>
-							<td class="text-center">${materialList.employee_no}</td>
-							<td class="text-center">${materialList.material_checkDate }</td>
-						<!-- 수정, 삭제 기능 추가 -->
+							<td class="align-middle text-center">${index + 1}</td>
+							<td class="align-middle text-center">${materialList.material_num}</td>
+							<td class="align-middle text-center">${materialList.product_code}</td>
+							<td class="align-middle text-center">${materialList.product_name}</td>
+							<td class="align-middle text-center">${materialList.product_category_detail}</td>
+							<td class="align-middle text-center">${materialList.quantity}</td>
+							<td class="align-middle text-center">${materialList.warehouse_no}</td>
+							<td class="align-middle text-center">${materialList.employee_no}</td>
+							<td class="align-middle text-center">${materialList.material_checkDate }</td>
+							<!-- 수정, 삭제 기능 추가 -->
 						</tr>
 					</tbody>
 				</table>
-				
-				<div class="row">
-					<div class="col-sm-5">
-						<div class="ms-6">Showing ${pageVO.startPage } to
-							${pageVO.endPage } of 미구현 entries</div>
-					</div>
-					<div class="col-sm-5 mb-3">
-						<ul class="pagination">
-							<c:if test="${pageVO.prev }">
-								<li class="page-link link-container"><a
-									href="/Material/${listUrl }?page=${pageVO.endPage-pageVO.displayPageNum }&searchword=${searchword}"
-									class="link"><<</a></li>
-							</c:if>
-							<c:forEach var="i" begin="${pageVO.startPage }"
-								end="${pageVO.endPage }" step="1">
-								<li
-									${pageVO.cri.page == i ? "class='link-container active'" : "class='link-container'"}>
-									<a href="/Material/${listUrl }?page=${i }&searchword=${searchword}"
-									${pageVO.cri.page == i ? "class='page-link rounded fw-bolder link-white'" : "class='page-link rounded fw-bolder'"}>${i }</a>
-								</li>
-							</c:forEach>
-							<c:if test="${pageVO.next }">
-								<li class="page-link link-container"><a
-									href="/Material/${listUrl }?page=${pageVO.startPage+pageVO.displayPageNum }&searchword=${searchword}"
-									class="link">>></a></li>
-							</c:if>
-						</ul>
-					</div>
-					<div class="col-sm-2">
-					<a href="/Material/MaterialOrderList"
-						class="btn bg-gradient-dark mt-3">발주서 작성하기</a>
-					</div>
-				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-5">
+				<div class="ms-6">Showing ${pageVO.startPage } to
+					${pageVO.endPage } </div>
+			</div>
+			<div class="col-sm-5 mb-3">
+				<ul class="pagination">
+					<c:if test="${pageVO.prev }">
+						<li class="page-link link-container"><a
+							href="/Material/${listUrl }?page=${pageVO.endPage-pageVO.displayPageNum }&searchword=${searchword}"
+							class="link"><<</a></li>
+					</c:if>
+					<c:forEach var="i" begin="${pageVO.startPage }"
+						end="${pageVO.endPage }" step="1">
+						<li
+							${pageVO.cri.page == i ? "class='link-container active'" : "class='link-container'"}>
+							<a
+							href="/Material/${listUrl }?page=${i }&searchword=${searchword}"
+							${pageVO.cri.page == i ? "class='page-link rounded fw-bolder link-white'" : "class='page-link rounded fw-bolder'"}>${i }</a>
+						</li>
+					</c:forEach>
+					<c:if test="${pageVO.next }">
+						<li class="page-link link-container"><a
+							href="/Material/${listUrl }?page=${pageVO.startPage+pageVO.displayPageNum }&searchword=${searchword}"
+							class="link">>></a></li>
+					</c:if>
+				</ul>
+			</div>
+			<div class="col-sm-2">
+				<a href="/Material/MaterialOrderList"
+					class="btn bg-gradient-dark mt-3">발주서 작성하기</a>
 			</div>
 		</div>
 	</div>
@@ -148,33 +151,33 @@
 						materials
 								.forEach(function(material, index) {
 									var row = '<tr>'
-											+ '<th scope="row" class="text-center">'
+											+ '<td class="align-middle text-center">'
 											+ (index + 1)
-											+ '</th>'
-											+ '<td>'
+											+ '</td>'
+											+ '<td class="align-middle text-center">'
 											+ material.material_num
 											+ '</td>'
 											+ // 여기서 materialList를 material로 바꿈
-											'<td>'
+											'<td class="align-middle text-center">'
 											+ material.product_code
 											+ '</td>'
 											+ // 이하 동일
-											'<td>'
+											'<td class="align-middle text-center">'
 											+ material.product_name
 											+ '</td>'
-											+ '<td>'
+											+ '<td class="align-middle text-center">'
 											+ material.product_category_detail
 											+ '</td>'
-											+ '<td>'
+											+ '<td class="align-middle text-center">'
 											+ material.material_quantity
 											+ '</td>'
-											+ '<td>'
+											+ '<td class="align-middle text-center">'
 											+ material.warehouse_no
 											+ '</td>'
-											+ '<td>'
+											+ '<td class="align-middle text-center">'
 											+ material.employee_no
 											+ '</td>'
-											+ '<td>'
+											+ '<td class="align-middle text-center">'
 											+ (material.material_checkDate ? material.material_checkDate
 													: '') + '</td>' + '</tr>';
 

@@ -57,6 +57,7 @@ public class OrdersController {
 			ordersVOList = oService.findOrderList(params);
 		}
 
+		logger.debug("ordersVOList: " + ordersVOList);
 		// 데이터 전달
 		model.addAttribute(pageVO);
 		model.addAttribute("pageUrl", "lists");
@@ -175,7 +176,7 @@ public class OrdersController {
 			productVOList = oService.findProduct(params);
 		}
 		
-		logger.debug("productVOList: " + productVOList.size());
+		logger.debug("productVOList: " + productVOList);
 		// 데이터 전달
 		model.addAttribute(pageVO);
 		model.addAttribute("pageUrl", "products");
@@ -197,6 +198,21 @@ public class OrdersController {
 		return productVO;
 	} 
 	
+	// 발주서 수정 - GET
+	@RequestMapping(value = "/editForm", method = RequestMethod.GET)
+	public void editFormGET(@RequestParam(name = "order_id") Integer order_id, 
+							Model model, HttpSession session) {
+		
+		logger.debug("Controller: /orders/editForm(order_id)");
+
+		String id = (String)session.getAttribute("id");
+		MemberVO memberVO = oService.getMemberInfo(id);
+		OrdersVO ordersVO = oService.getOrderDetail(order_id);
+		
+		model.addAttribute(memberVO);	
+		model.addAttribute(ordersVO);
+	}
+	
 	// 발주서 수정 - POST
 	@RequestMapping(value = "/editForm", method = RequestMethod.POST)
 	public String editFormPOST(OrdersVO ovo, RedirectAttributes rttr) {
@@ -210,18 +226,18 @@ public class OrdersController {
 		oService.editForm(ovo);
 		rttr.addFlashAttribute("result", "modifyOK");
 		
-		return "redirect:/orders/orderList";
+		return "redirect:/orders/lists";
 	}
 	
 	// 발주서 삭제 - POST
 	@RequestMapping(value = "/cancelForm", method = RequestMethod.POST)
-	public String cancelFormPOST(@RequestParam("order_id")int order_id) {
+	@ResponseBody
+	public void cancelFormPOST(@RequestParam("order_id")int order_id) {
 		
 		logger.debug("/orders/cancelFormPOST() 호출");
 		
 		// 서비스 - 발주서 삭제 동작 호출(DELETE)
 		oService.cancelForm(order_id);
 		
-		return "redirect:/orders/orderList";
 	}
 }

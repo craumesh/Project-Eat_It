@@ -67,7 +67,7 @@
 		</div>
 		<div class="row">
 			<div class="col-sm-5">
-				<%-- <div>Showing ${pageVO.startPage } to ${pageVO.endPage } of 미구현 entries</div> --%>
+				<div>Showing ${pageVO.startPage } to ${pageVO.endPage }</div>
 			</div>
 			<div class="col-sm-5">
 				<ul class="pagination">

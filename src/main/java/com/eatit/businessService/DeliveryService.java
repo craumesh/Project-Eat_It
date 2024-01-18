@@ -6,6 +6,7 @@ import java.util.Map;
 import com.eatit.businessDomain.DeliveryVO;
 import com.eatit.mainDomain.Criteria;
 import com.eatit.memberDomain.MemberVO;
+import com.eatit.warehouseDomain.StockInfoVO;
 
 public interface DeliveryService {
 
@@ -19,4 +20,16 @@ public interface DeliveryService {
 
 	public MemberVO getMemberInfo(String id);
 
+	public void requestDelivery(DeliveryVO dvo);
+
+	public void requestRelease(Integer order_id);
+
+	public DeliveryVO getDeliveryDetail(Integer delivery_id);
+
+	public void startDelivery(Map<String, Object> params);
+
+	public void completeDelivery(Integer delivery_id);
+	
+	public void completeRelease(Integer order_id);
+	
 }
