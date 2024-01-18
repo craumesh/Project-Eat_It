@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- hikariCP : 연결정보 저장객체 -->
+	<bean 	id="hikariConfig"
+			class="com.zaxxer.hikari.HikariConfig">
+			<!-- <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+			<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/springdb"/> -->
+			<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/>
+			<property name="jdbcUrl" value="jdbc:log4jdbc:mysql://itwillbs.com:3306/c7d2307t3_2"/>
+			<property name="username" value="c7d2307t3"/>
+			<property name="password" value="1234"/>
+	</bean>
+	<!-- hikariCP : 연결정보 저장객체 -->	
+	
+	<!-- dataSource : DB 연결 -->
+	<bean 	id="dataSource"
+			class="com.zaxxer.hikari.HikariDataSource"
+			destroy-method="close">
+			<constructor-arg ref="hikariConfig"/>
+	</bean>
+	<!-- dataSource : DB 연결 -->	
+	
+	<!-- sqlSessionFactory : DB 연결, 데이터처리(SQL실행, Mybatis설정) -->
+	<bean 	id="sqlSessionFactory"
+			class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="dataSource"/>
+			<property name="configLocation" value="classpath:/mybatis-config.xml"/>
+			<property name="mapperLocations" value="classpath:/mappers/**/*Mapper.xml"/>
+	</bean>
+	<!-- sqlSessionFactory : DB 연결, 데이터처리(SQL실행, Mybatis설정) -->
+	
+	<!-- sqlSession : 자동 DB 연결, 데이터처리(SQL실행, Mybatis설정), 자동 자원해제처리 -->
+	<!-- 				기본적인 트랙잭션 관리, 쓰레드 처리 안정성 높임 -->
+	<bean 	id="sqlSession"
+			class="org.mybatis.spring.SqlSessionTemplate"
+			destroy-method="close">
+			<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+	<!-- sqlSession : 자동 DB 연결, 데이터처리(SQL실행, Mybatis설정), 자동 자원해제처리 -->
+	
+	<!--  com.itwillbs.persistence 패키지 등록 -->
+	<context:component-scan base-package="com.eatit.*Persistence"/>
+	<context:component-scan base-package="com.eatit.*Service"/>
+	
+</beans>

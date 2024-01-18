@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.eatit.mapper.MaterialMapper">
+
+	<!-- 원자재 전체 조회 -->
+	<select id="findAll"
+		resultType="com.eatit.MaterialDomain.MaterialVO">
+		SELECT material_num AS material_num,
+		product_code AS
+		product_code,
+		product_name AS product_name,
+		product_category_detail AS
+		product_category_detail,
+		material_quantity AS material_quantity,
+		warehouse_no AS warehouse_no,
+		employee_no AS employee_no,
+		material_checkDate AS material_checkDate
+		FROM material
+	</select>
+
+	<select id="selectSearchList" resultType="MemberVO"
+		parameterType="map">
+		SELECT *
+		FROM member
+		WHERE active='승인'
+		AND (name LIKE CONCAT('%', #{searchword}, '%')
+		OR position_name LIKE CONCAT('%', #{searchword}, '%')
+		OR employee_no=#{searchword})
+		ORDER BY employee_no DESC, regdate DESC
+		LIMIT #{cri.startPage}, #{cri.pageSize}
+	</select>
+
+	<select id="totalCount" resultType="int">
+		SELECT COUNT(*)
+		FROM material
+	</select>
+
+	<select id="find"
+		resultType="com.eatit.MaterialDomain.materialaddVO">
+		SELECT materialadd_no AS materialadd_no,
+		materialadd_date AS
+		materialadd_date,
+		product_no AS product_no,
+		warehouse_no AS
+		warehouse_no,
+		expiry_date AS expiry_date,
+		quantity As quantity,
+		status As
+		status
+		FROM
+		materialadd
+	</select>
+
+	<!--입/출고 등록 -->
+	<select id="insertmaterialadd">
+		insert into
+		materialadd(product_no,warehouse_no,expiry_date,quantity,status)
+		values(#{product_no},#{warehouse_no},#{expiry_date},#{quantity}
+		,#{status})
+	</select>
+
+
+	<!-- 테이블 데이터 매핑 -->
+	<select id="Materialorder"
+		resultType="com.eatit.MaterialDomain.MaterialOrderVO">
+		SELECT materialod_id AS materialod_id,
+		materialod_date AS
+		materialod_date,
+		company_no AS company_no,
+		materialod_update AS materialod_update,
+		product_no AS product_no,
+		quantity AS quantity,
+		employee_no AS employee_no,
+		status AS status
+		FROM materialod
+
+	</select>
+
+	<resultMap type="com.eatit.MaterialDomain.MaterialOrderVO"
+		id="MaterialOrderVO" />
+	
+
+	<!-- 주문 상세 조회 -->
+	<select id="MaterialorderDetail" resultType="com.eatit.MaterialDomain.MaterialOrderVO">
+		SELECT * FROM materialod 
+		WHERE
+		materialod_id = #{materialod_id}
+	</select>
+
+	<!-- 발주서 수정 -->
+	<update id="updateDetailInfo">
+		UPDATE materialod SET materialod_update =
+		#{materialod_update},
+		materialod_update = NOW()
+		WHERE materialod_id =
+		#{materialod_id}
+	</update>
+
+	<!-- 발주서 삭제 -->
+	<update id="deleteMaterial">
+		UPDATE materialod SET materialod_status = "취소",
+		materialod_update = NOW(),
+		delete_status = 1
+		WHERE materialod_id =
+		#{materialod_id}
+	</update>
+	
+	
+	
+	
+
+
+</mapper>

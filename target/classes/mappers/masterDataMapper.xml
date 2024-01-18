@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eatit.mapper.masterDataMapper">
+
+	<resultMap type="com.eatit.masterdataDomain.MasterdataVO"
+		id="product">
+		<result property="product_no" column="product_no" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="photo_paths" column="photo_paths" />
+		<result property="category" column="category" />
+		<result property="category_detail" column="category_detail" />
+		<result property="company_no" column="company_no" />
+		<result property="unit" column="unit" />
+		<result property="unit_quantity" column="unit_quantity" />
+		<result property="price" column="price" />
+
+
+
+	</resultMap>
+
+
+	<select id="countProduct" resultType="int">
+  	  <![CDATA[
+	  	  select count(*) from masterdata_information 
+	  	  where category = '완제품'
+   	  ]]>
+	</select>
+
+
+	<select id="mtotalCount" resultType="int">
+  		<![CDATA[
+	  		SELECT COUNT(*)
+	  		FROM masterdata_information
+	  		where category = '자재'
+	  		
+  		]]>
+	</select>
+
+
+	<select id="ftotalCount" resultType="int">
+  		<![CDATA[
+	  		SELECT COUNT(*)
+	  		FROM machine	  			  		
+  		]]>
+	</select>
+
+
+	<select id="qtotalCount" resultType="int">
+  		<![CDATA[
+	  		SELECT COUNT(*)
+	  		FROM quality	  			  		
+  		]]>
+	</select>
+
+
+
+
+	<select id="getProductList" resultType="MasterdataVO">
+		SELECT pi.*, r.*
+		FROM
+		masterdata_information pi
+		LEFT JOIN recipe r ON pi.code = r.code
+		WHERE
+		pi.category = '완제품'
+	</select>
+
+
+	<select id="getMIMList" resultType="MasterdataVO">
+		select * from
+		masterdata_information
+		where category='자재'
+		order by product_no desc
+		limit
+		#{startPage},#{pageSize}
+	</select>
+
+
+	<select id="getFIMList" resultType="machineVO">
+		select * from machine
+
+		order by machine_code desc
+		limit
+		#{startPage},#{pageSize}
+	</select>
+
+	<select id="getCategoryList" resultType="MasterdataVO">
+		select * from masterdata_information
+		where category = '완제품'
+
+		order by product_no desc
+
+	</select>
+
+	<select id="dataList" resultType="MasterdataVO">
+		select * from quality_test
+		where test_no>0
+
+	</select>
+
+
+
+	<select id="getQIMList" resultType="MasterdataVO">
+		SELECT q.*, pi.*
+		FROM quality
+		q
+		LEFT JOIN masterdata_information pi ON pi.code = q.product_code
+
+		order by quality_no desc
+		limit
+		#{startPage},#{pageSize}
+	</select>
+
+
+
+	<insert id="insertProduct">
+		insert into
+		masterdata_information(code,name,category_detail,company_no,unit,unit_quantity,price,category)
+		values(#{code},#{name},#{category_detail},#{company_no},'ea','ea',#{price},'완제품')
+	</insert>
+
+	<insert id="insertRecipe" parameterType="MasterdataVO">
+		<!-- recipe 테이블에 데이터 삽입 -->
+		INSERT INTO recipe (code,recipe)
+		VALUES
+		(#{code},#{recipe});
+	</insert>
+
+
+	<insert id="insertQIM">
+		insert into
+		quality(product_code,product_visual,taste,scent,texture,measure)
+		values(#{product_code},#{product_visual},#{taste},#{scent},#{texture},#{measure})
+	</insert>
+
+	<insert id="insertQIMTest">
+		insert into
+		quality_test(product_code,test_tool,test_method,test_equipment)
+		values(#{product_code},#{test_tool},#{test_method},#{test_equipment})
+	</insert>
+
+
+
+	<insert id="insertMIM">
+		insert into
+		masterdata_information(code,name,category_detail,company_no,unit,unit_quantity,price,category)
+		values(#{code},#{name},#{category_detail},#{company_no},#{unit},#{unit_quantity},#{price},'자재')
+	</insert>
+
+	<insert id="insertFIM">
+		insert into
+		machine(machine_name,machine_status,employee_no,purpose_of_use,installation_date,machine_location)
+		values(#{machine_name},#{machine_status},#{employee_no},#{purpose_of_use},#{installation_date},#{machine_location})
+	</insert>
+
+
+	<update id="updateProduct">
+		update masterdata_information
+		set code =
+		#{code},
+		name =
+		#{name},
+		category =
+		COALESCE(#{category}, category, '완제품'),
+		category_detail = #{category_detail},
+		company_no =
+		#{company_no},
+		unit =
+		#{unit},
+		unit_quantity = #{unit_quantity},
+		price =
+		#{price}
+
+		where product_no =
+		#{product_no};
+	</update>
+	<update id="updateMIM">
+		update masterdata_information
+		set code =
+		#{code},
+		name = #{name},
+		category =
+		COALESCE(#{category}, category, '자재'),
+		category_detail = #{category_detail},
+		company_no =
+		#{company_no},
+		unit = #{unit},
+		unit_quantity = #{unit_quantity},
+		price =
+		#{price}
+		where product_no =
+		#{product_no};
+	</update>
+
+	<update id="updateFIM">
+		update machine
+		set machine_name =
+		#{machine_name},
+		machine_status = #{machine_status},
+		employee_no = #{employee_no},
+		purpose_of_use =
+		#{purpose_of_use},
+		installation_date
+		= #{installation_date},
+		machine_location =
+		#{machine_location}
+
+		where machine_code =
+		#{machine_code};
+	</update>
+
+
+
+
+
+	<update id="updateRecipe">
+		UPDATE recipe
+		SET recipe = #{recipe}
+		WHERE code
+		= #{code};
+	</update>
+
+
+	<delete id="deleteRecipeByProductCode">
+		delete from recipe
+		where code =
+		#{code}
+	</delete>
+
+	<delete id="deleteProduct">
+		delete from masterdata_information
+		where product_no =
+		#{product_no}
+	</delete>
+
+	<delete id="deleteAllRecipeByProductCode">
+		delete from recipe
+		where code =
+		#{code}
+	</delete>
+
+	<delete id="deleteRPC">
+		delete from recipe
+		where code = #{code}
+	</delete>
+
+	<delete id="deleteQuality">
+		delete from quality
+		where quality_no = #{quality_no}
+	</delete>
+
+	<delete id="deletePC">
+		delete from masterdata_information
+		where code = #{code}
+	</delete>
+
+
+	<delete id="deleteAllProduct">
+		delete from masterdata_information
+		where product_no =
+		#{product_no}
+	</delete>
+
+
+
+	<delete id="deleteMIM">
+		delete from masterdata_information
+		where product_no =
+		#{product_no}
+	</delete>
+
+
+	<delete id="deleteFIM">
+		delete from machine
+		where machine_code =
+		#{machine_code}
+	</delete>
+
+
+
+
+	<select id="MdListPage" resultType="MasterdataVO"
+		resultMap="product">
+		SELECT pi.*, r.*
+		FROM masterdata_information pi
+		LEFT JOIN recipe
+		r ON
+		pi.code = r.code
+		where category = '완제품'
+		order by product_no desc
+		limit
+		#{startPage},#{pageSize}
+	</select>
+
+
+
+	<select id="getPIMSearchCount" resultType="int"
+		parameterType="String">
+  	  <![CDATA[
+	  	  select count(*) FROM masterdata_information pi
+		LEFT JOIN recipe r ON pi.code = r.product_code
+		WHERE
+		pi.category = '완제품' AND (
+        pi.name LIKE CONCAT('%', #{keyword}, '%')
+        OR pi.code LIKE CONCAT('%', #{keyword}, '%')
+        OR pi.category_detail LIKE CONCAT('%', #{keyword}, '%')
+        OR pi.company_no LIKE CONCAT('%', #{keyword}, '%')
+        OR pi.unit LIKE CONCAT('%', #{keyword}, '%')
+        OR pi.unit_quantity LIKE CONCAT('%', #{keyword}, '%')
+        OR pi.price LIKE CONCAT('%', #{keyword}, '%')
+        
+        OR r.recipe LIKE CONCAT('%', #{keyword}, '%')
+		)
+   	  ]]>
+	</select>
+
+	<select id="getQIMSearchCount" resultType="int"
+		parameterType="String">
+  	  <![CDATA[
+	  	  select count(*) FROM quality q
+		LEFT JOIN masterdata_information pi ON pi.code = q.product_code
+		WHERE
+		
+        q.quality_no LIKE CONCAT('%', #{keyword}, '%')
+        OR pi.code LIKE CONCAT('%', #{keyword}, '%')
+        OR pi.name LIKE CONCAT('%', #{keyword}, '%')
+        OR q.product_visual LIKE CONCAT('%', #{keyword}, '%')
+        OR q.taste LIKE CONCAT('%', #{keyword}, '%')
+        OR q.scent LIKE CONCAT('%', #{keyword}, '%')
+        OR q.texture LIKE CONCAT('%', #{keyword}, '%')
+        OR q.measure LIKE CONCAT('%', #{keyword}, '%')
+   	  ]]>
+	</select>
+
+
+	<select id="getMIMSearchCount" parameterType="String"
+		resultType="int">
+		<![CDATA[
+		select count(*)
+		FROM masterdata_information 		
+		WHERE
+		category = '자재' AND (
+        name LIKE CONCAT('%', #{keyword}, '%')
+        OR code LIKE CONCAT('%', #{keyword}, '%')
+        OR category_detail LIKE CONCAT('%', #{keyword}, '%')
+        OR company_no LIKE CONCAT('%', #{keyword}, '%')
+        OR unit LIKE CONCAT('%', #{keyword}, '%')
+        OR unit_quantity LIKE CONCAT('%', #{keyword}, '%')
+        OR price LIKE CONCAT('%', #{keyword}, '%')
+              
+		)
+		  ]]>
+	</select>
+
+	<select id="getFIMSearchCount" parameterType="String"
+		resultType="int">
+  <![CDATA[
+    SELECT COUNT(*) AS count
+    FROM machine
+    WHERE
+      machine_code LIKE CONCAT('%', #{keyword}, '%')
+      OR machine_name LIKE CONCAT('%', #{keyword}, '%')
+      OR machine_status LIKE CONCAT('%', #{keyword}, '%')
+      OR employee_no LIKE CONCAT('%', #{keyword}, '%')
+      OR purpose_of_use LIKE CONCAT('%', #{keyword}, '%')
+      OR installation_date LIKE CONCAT('%', #{keyword}, '%')
+      OR machine_location LIKE CONCAT('%', #{keyword}, '%')
+  ]]>
+	</select>
+
+
+
+
+
+	<select id="searchProducts" parameterType="String"
+		resultType="MasterdataVO">
+		SELECT pi.*, r.*
+		FROM masterdata_information pi
+		LEFT JOIN recipe
+		r ON pi.code = r.code
+		WHERE
+		pi.category = '완제품'
+		AND (
+		pi.name LIKE CONCAT('%', #{keyword}, '%')
+		OR pi.code LIKE CONCAT('%', #{keyword}, '%')
+		OR pi.category_detail LIKE CONCAT('%', #{keyword}, '%')
+		OR pi.company_no LIKE CONCAT('%', #{keyword}, '%')
+		OR pi.unit LIKE CONCAT('%', #{keyword}, '%')
+		OR pi.unit_quantity LIKE CONCAT('%', #{keyword}, '%')
+		OR pi.price LIKE CONCAT('%', #{keyword}, '%')
+
+		OR r.recipe LIKE CONCAT('%', #{keyword}, '%')
+		)
+	</select>
+
+	<select id="searchMIM" parameterType="String"
+		resultType="MasterdataVO">
+		SELECT *
+		FROM masterdata_information
+		WHERE
+		category = '자재' AND (
+		name LIKE CONCAT('%', #{keyword}, '%')
+		OR code LIKE CONCAT('%', #{keyword}, '%')
+		OR category_detail LIKE CONCAT('%', #{keyword}, '%')
+		OR company_no LIKE CONCAT('%', #{keyword}, '%')
+		OR unit LIKE CONCAT('%', #{keyword}, '%')
+		OR unit_quantity LIKE CONCAT('%', #{keyword}, '%')
+		OR price LIKE CONCAT('%', #{keyword}, '%')
+
+		)
+	</select>
+
+	<select id="searchFIM" parameterType="String"
+		resultType="machineVO">
+		SELECT *
+		FROM machine
+		WHERE
+		machine_code LIKE CONCAT('%', #{keyword}, '%')
+		OR machine_name LIKE CONCAT('%', #{keyword}, '%')
+		OR machine_status LIKE CONCAT('%', #{keyword}, '%')
+		OR employee_no LIKE CONCAT('%', #{keyword}, '%')
+		OR purpose_of_use LIKE CONCAT('%', #{keyword}, '%')
+		OR installation_date LIKE CONCAT('%', #{keyword}, '%')
+		OR machine_location LIKE CONCAT('%', #{keyword}, '%')
+
+	</select>
+
+
+	<select id="searchQIM" parameterType="String"
+		resultType="MasterdataVO">
+		SELECT pi.*, q.*
+		FROM quality q
+		LEFT JOIN masterdata_information
+		pi ON pi.code = q.product_code
+		WHERE
+
+		q.quality_no LIKE CONCAT('%', #{keyword}, '%')
+		OR pi.code LIKE CONCAT('%', #{keyword}, '%')
+		OR pi.name LIKE CONCAT('%', #{keyword}, '%')
+		OR q.product_visual LIKE CONCAT('%', #{keyword}, '%')
+		OR q.taste LIKE CONCAT('%', #{keyword}, '%')
+		OR q.scent LIKE CONCAT('%', #{keyword}, '%')
+		OR q.texture LIKE CONCAT('%', #{keyword}, '%')
+		OR q.measure LIKE CONCAT('%', #{keyword}, '%')
+
+	</select>
+
+
+
+
+
+
+	<select id="getCIMList" resultType="MasterdataVO">
+		SELECT pi.*, r.*
+		FROM
+		masterdata_information pi
+		LEFT JOIN recipe r ON pi.code =
+		r.code
+		WHERE pi.category = '완제품'
+	</select>
+
+	<select id="selectMDContent" resultType="MasterdataVO">
+		select * from quality_test
+		where product_code = #{product_code}
+	</select>
+	
+	<select id="selectRecipeContent" resultType="MasterdataVO">
+		select * from recipe
+		where code = #{code}
+	</select>
+	
+
+
+	
+	<select id="selectCIMList" resultType="MasterdataVO">
+		SELECT mi.*,c.company_name as company_name
+		FROM masterdata_information mi
+		JOIN company c
+		ON mi.company_no=c.company_no
+		WHERE category='완제품'
+	    ORDER BY product_no DESC
+		LIMIT #{startPage},#{pageSize}
+	</select>
+	
+	<select id="selectSearchCIMList" resultType="MasterdataVO" parameterType="map">
+		SELECT mi.*,c.company_name as company_name
+	    FROM masterdata_information mi
+	    JOIN company c
+		ON mi.company_no=c.company_no
+	    WHERE category='완제품'
+	    <choose>
+	        <when test="filter == '등록'">
+	            AND recipe!='미등록'
+	        </when>
+	        <when test="filter == '미등록'">
+	            AND recipe='미등록'
+	        </when>
+	    </choose>
+	    AND (name LIKE CONCAT('%', #{query}, '%')
+	    OR code LIKE CONCAT('%', #{query}, '%')
+	    OR product_no=#{query})
+	    ORDER BY product_no DESC
+	    LIMIT #{cri.startPage}, #{cri.pageSize}
+	</select>
+	
+	
+	<select id="selectCIMCount" resultType="int"> 
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM masterdata_information
+			WHERE category='완제품'
+		]]>
+	</select>
+	
+	<select id="selectSearchCount" resultType="int"> 
+		SELECT COUNT(*)
+	    FROM masterdata_information
+	    WHERE category='완제품'
+	    <choose>
+	        <when test="filter == '등록'">
+	            AND recipe!='미등록'
+	        </when>
+	        <when test="filter == '미등록'">
+	            AND recipe='미등록'
+	        </when>
+	    </choose>
+	    AND (name LIKE CONCAT('%', #{query}, '%')
+	    OR code LIKE CONCAT('%', #{query}, '%')
+	    OR product_no=#{query})
+	</select>
+	
+	<select id="selectCIMContent" resultType="MasterdataVO">
+		SELECT mi.*,c.company_name as company_name
+		FROM masterdata_information mi
+		JOIN company c
+		ON mi.company_no=c.company_no
+		WHERE category='완제품'
+		AND product_no=#{product_no}
+	</select>
+	
+	<select id="selectMaterialNames" resultType="String">
+		SELECT name
+		FROM masterdata_information
+		WHERE category='자재'
+	</select>
+	
+	<update id="updateRequires">
+		UPDATE masterdata_information
+		SET recipe=#{recipe}
+		WHERE code=#{code}
+	</update>
+	
+	<update id="deleteRequires">
+		UPDATE masterdata_information
+		SET recipe='미등록'
+		WHERE product_no=#{product_no}
+	</update>
+</mapper>

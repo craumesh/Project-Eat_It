@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.eatit.mapper.warehouseMapper">
+  	<!--창고 정보 리스트 조회 -->
+  	<select id="getWarehouseListAll" resultType="WarehouseVO">
+  		SELECT * FROM warehouse
+  	</select>
+  	
+  	<!--회원 정보 리스트 조회 -->
+  	<select id="getMemberListAll" resultType="com.eatit.memberDomain.MemberVO">
+  		SELECT * FROM member
+  	</select>
+  	
+  	<!--직책 정보 가져오기(Ajax)-->
+	<select id="getPositionName" resultType="String">
+		SELECT position_name
+		FROM member
+		GROUP BY position_name
+	</select>
+	
+	<!--직책에 해당하는 회원이름 리스트 가져오기(Ajax)-->
+	<select id="getMembersOfPosition" resultType="String">
+		SELECT 
+			name 
+		FROM member 
+		WHERE position_name =#{position_name}
+	</select>
+	
+	<!--이름에 해당하는 회원정보 리스트 가져오기(Ajax)-->
+	<select id="getMemberInfoByName" resultType="com.eatit.memberDomain.MemberVO">
+		SELECT 
+			name, 
+			contact, 
+			email 
+		FROM member 
+		WHERE name =#{name}
+	</select>
+	  	
+  	<!--창고 정보 리스트 조회(main) -->
+  	<select id="getWarehouseMainList" resultType="WarehouseVO">
+  		SELECT 
+  			warehouse_no,
+  			location_name,
+  			warehouse_name,
+  			category,
+  			w.admin_no,
+  			m.name,
+  			use_status 
+		FROM warehouse w JOIN member m
+		ON w.admin_no=m.employee_no
+		ORDER BY warehouse_no asc
+  	</select>
+  	
+  	<!--특정 창고 정보 조회(Ajax)-->
+  	<select id="getWarehouseInfo" resultType="WarehouseVO">
+  		SELECT 
+  			warehouse_no, 
+  			location_name, 
+  			warehouse_name, 
+  			category, 
+  			admin_no, 
+  			use_status, 
+  			note, 
+  			updater, 
+  			updatedate, 
+  			name, 
+  			contact, 
+  			email  
+  		FROM warehouse w join member m
+  		ON w.admin_no = m.employee_no
+  		WHERE warehouse_no = #{warehouse_no}
+  	</select>
+  	
+  	<!--세션 아이디에 해당하는 회원정보-->
+  	<select id="getWarehouseAdminInfo" resultType="com.eatit.memberDomain.MemberVO">
+  		SELECT 
+  			employee_no, 
+  			name, 
+  			contact, 
+  			email 
+		FROM member 
+		WHERE employee_no = #{no} 
+  	</select>
+  	
+  	<!--창고 등록-->
+  	<insert id="insertWarehouse" >
+  		INSERT INTO warehouse(location_name,warehouse_name,category,admin_no,note) 
+  		VALUES(#{location_name},#{warehouse_name},#{category},#{admin_no},#{note})
+  	</insert>
+  	
+  	<!--창고 수정-->
+  	<update id="updateDetailInfo">
+  	<![CDATA[
+  		UPDATE warehouse 
+  		SET 
+  			category=#{category},
+  			warehouse_name=#{warehouse_name},
+  			note=#{note},
+  			updater=(SELECT name 
+  					 FROM member 
+  					 WHERE employee_no = #{admin_no}), 
+			updatedate=now(),
+  			admin_no=(SELECT employee_no 
+  					  FROM member 
+  					  WHERE name = #{name})  
+  		WHERE warehouse_no = #{warehouse_no}
+  	]]>
+  	</update>
+  	
+  	<!--창고 삭제-->
+  	<delete id="deleteWarehouse" parameterType="java.util.Map">
+  		DELETE FROM warehouse WHERE warehouse_no IN
+  		 <foreach collection="warehouse_no" item="no" open="(" separator="," close=")">
+            #{no}
+        </foreach>
+  	</delete>
+  	
+  	<!-- 완제품 재고 정보 조회 -->
+  	<select id="getStockOfFinishedProduct" resultType="com.eatit.warehouseDomain.StockInfoVO">
+  	 <![CDATA[
+            SELECT 
+            	history_no,
+            	mi.code,
+            	mi.company_no,
+            	ph.warehouse_no,
+            	mi.category,
+            	mi.name,
+            	products 'io_quantities',
+            	mi.unit,
+                (mi.price * products)/10000 'price',
+                ph.EXPiry_date 'expiry_date',
+                ph.date_of_manufacture 'io_date'  
+            FROM production_history ph  
+            JOIN masterdata_information mi ON ph.product_no = mi.product_no  
+            JOIN warehouse w ON ph.warehouse_no = w.warehouse_no
+        ]]>
+  	</select>
+  	
+  	<!-- 자재 재고 정보 조회 -->
+  	<select id="getStockOfMaterial" resultType="com.eatit.warehouseDomain.StockInfoVO">
+  	 <![CDATA[
+            SELECT 
+            	materialadd_no 'history_no',
+            	mi.code,
+            	mi.company_no,
+            	ma.warehouse_no,
+            	mi.category,
+            	mi.name,
+            	quantity 'io_quantities' ,
+            	mi.unit,
+				(mi.price*quantity)/10000 'price',
+				ma.expiry_date,
+				ma.materialadd_date 'io_date'  
+			FROM materialadd ma 
+			JOIN masterdata_information mi ON ma.product_no = mi.product_no 
+			JOIN warehouse w ON ma.warehouse_no = w.warehouse_no
+        ]]>
+  	</select>
+  	
+	<!-- stock_info table 조회 -->
+  	<select id="totalCount" resultType="int">
+	  		SELECT COUNT(*)
+	  		FROM stock_info
+  	</select>
+  	
+	<!-- 검색된 주문 개수 -->
+	<select id="findCount" resultType="int" parameterType="map">
+	 	SELECT COUNT(*) 
+	 	FROM stock_info
+	 	WHERE identify_code IS NOT NULL
+		<choose>
+		  <when test = "filter == '대기중'"> AND status = '대기중' </when>
+		  <when test = "filter == '승인'"> AND status = '승인' </when>
+		  <when test = "filter == '취소'"> AND status = '취소' </when>
+		  <when test = "filter == '입고'"> AND io_classification = '입고' </when>
+		  <when test = "filter == '출고'"> AND io_classification = '출고' </when>
+		  <when test = "filter == '자재'"> AND category = '자재' </when>
+		  <when test = "filter == '완제품'"> AND category = '완제품' </when>
+	  	</choose>		  		  		
+		AND (
+				identify_code LIKE CONCAT('%', #{searchword}, '%') 
+				OR io_classification LIKE CONCAT('%', #{searchword}, '%') 
+				OR category LIKE CONCAT('%', #{searchword}, '%') 
+				OR status LIKE CONCAT('%', #{searchword}, '%')
+			)
+	 </select>
+	  
+  	<!-- 검색 내역 조회 -->
+  	<select id="findStockInfoList" resultType="StockInfoVO" parameterType="map">
+		SELECT 
+			identify_code,
+ 			warehouse_no,
+ 			io_classification,
+ 			category,
+ 			product_name 'name',
+ 			io_quantities,
+ 			product_unit 'unit',
+ 			price,
+ 			expiry_date,
+ 			io_date,
+ 			status 
+		FROM stock_info
+		WHERE identify_code IS NOT NULL
+		<choose>
+		  <when test = "filter == '대기중'"> AND status = '대기중' </when>
+		  <when test = "filter == '승인'"> AND status = '승인' </when>
+		  <when test = "filter == '취소'"> AND status = '취소' </when>
+		  <when test = "filter == '입고'"> AND io_classification = '입고' </when>
+		  <when test = "filter == '출고'"> AND io_classification = '출고' </when>
+		  <when test = "filter == '자재'"> AND category = '자재' </when>
+		  <when test = "filter == '완제품'"> AND category = '완제품' </when>
+	  	</choose>	  		 		
+		AND(
+			identify_code LIKE CONCAT('%', #{searchword}, '%')
+			OR io_classification LIKE CONCAT('%', #{searchword}, '%')
+		 	OR category LIKE CONCAT('%', #{searchword}, '%') 
+		 	OR status LIKE CONCAT('%', #{searchword}, '%')
+			)
+		ORDER BY io_date 
+		LIMIT #{cri.startPage}, #{cri.pageSize}
+	</select>
+  	
+  	<select id="getStockInfo" resultType="com.eatit.warehouseDomain.StockInfoVO">
+  		SELECT  
+  			identify_code,
+  			warehouse_no,
+  			io_classification,
+  			category,
+  			product_name 'name',
+  			io_quantities,
+  			product_unit 'unit',
+  			price,
+  			expiry_date,
+  			io_date,
+  			status 
+  		FROM stock_info 
+  		ORDER BY io_date 
+  		LIMIT #{startPage},#{pageSize}
+  	</select>
+  	<!-- stock_info table 조회 -->
+  	
+  	<!-- stock table 조회 -->
+  	<select id="getStockTotalCount" resultType="int">
+	  		SELECT COUNT(*)
+	  		FROM stock
+  	</select>
+  	
+   	<select id="getFindStockListCount" resultType="int" parameterType="map">
+	 	SELECT COUNT(*) 
+	 	FROM stock
+	 	WHERE stock_id IS NOT NULL
+		<choose>
+		  <when test = "filter == '자재'"> AND category = '자재' </when>
+		  <when test = "filter == '완제품'"> AND category = '완제품' </when>
+	  	</choose>		  		  		
+		AND (
+				product_code LIKE CONCAT('%', #{searchword}, '%') 
+				OR category LIKE CONCAT('%', #{searchword}, '%')
+				OR product_name LIKE CONCAT('%', #{searchword}, '%') 
+			)
+   	</select>
+	
+	<select id="getStockListAll" resultType="com.eatit.warehouseDomain.StockVO">
+  		SELECT *
+  		FROM stock
+  		LIMIT #{startPage},#{pageSize}
+  	</select>
+	
+  	<select id="findStockList" resultType="com.eatit.warehouseDomain.StockVO" parameterType="map">
+		SELECT *
+		FROM stock
+		WHERE stock_id IS NOT NULL
+		<choose>
+	   		<when test = "filter == '자재'"> AND category = '자재' </when>
+		  	<when test = "filter == '완제품'"> AND category = '완제품' </when>
+	  	</choose>	  		 		
+		AND(
+			product_code LIKE CONCAT('%', #{searchword}, '%') 
+			OR category LIKE CONCAT('%', #{searchword}, '%')
+			OR product_name LIKE CONCAT('%', #{searchword}, '%') 
+			)
+		ORDER BY expiry_date
+		LIMIT #{cri.startPage}, #{cri.pageSize}
+	</select>
+  	<!-- stock table 조회 -->
+  	
+  	<!-- 특정 품목 stock_info 테이블 조회  -->
+  	<select id="getStockInfoByIdentifyCode" resultType="com.eatit.warehouseDomain.StockInfoVO">
+  		SELECT  
+  			identify_code,
+  			warehouse_no,
+  			io_classification,
+  			category,
+  			product_name 'name',
+  			io_quantities,
+  			product_unit 'unit',
+  			price,
+  			expiry_date,
+  			io_date,
+  			status 
+  		FROM stock_info
+  		WHERE identify_code = #{identify_code}
+  	</select>
+  	
+  	<select id="getStockInfoByIdentifyCode2" parameterType="java.util.Map" resultType="com.eatit.warehouseDomain.StockInfoVO">
+  		SELECT  
+  			identify_code,
+  			warehouse_no,
+  			io_classification,
+  			category,
+  			product_name 'name',
+  			io_quantities,
+  			product_unit 'unit',
+  			price,
+  			expiry_date,
+  			io_date,
+  			status 
+  		FROM stock_info
+  		WHERE identify_code IN
+  			<foreach collection="identifyCode" item="code" open="(" separator="," close=")">
+  				#{code}
+  			</foreach>
+  	</select>
+  	
+  	
+  	<select id="countIdentifyCode" resultType="int">
+  		SELECT COUNT(*) 
+  		FROM stock_info 
+  		WHERE identify_code = #{identifyCode}
+  	</select>
+  	
+  	<insert id="insertStockInfo">
+  		INSERT INTO stock_info(identify_code,warehouse_no,io_classification,category,product_name,io_quantities,product_unit,price,expiry_date,io_date)
+  		VALUES(#{identify_code},#{warehouse_no},#{io_classification},#{category},#{name},#{io_quantities},#{unit},#{price},#{expiry_date},#{io_date})
+  	</insert>
+  	
+  	<select id="countStock1" parameterType="java.util.Map" resultType="int">
+  		SELECT COUNT(*) 
+  		FROM stock
+  		WHERE product_code IN
+  			<foreach collection="productCode" item="code" open="(" separator="," close=")">
+  				#{code}
+  			</foreach>
+  	</select>
+  	
+  	<select id="countStock" resultType="int">
+  		SELECT COUNT(*) 
+  		FROM stock
+  		WHERE product_code = #{code}
+  	</select>
+  	
+  	<!--Stock 리스트 전부 조회 -->
+	<select id="getStockList" resultType="com.eatit.warehouseDomain.StockVO">
+		SELECT * 
+		FROM stock
+		ORDER BY expiry_date;
+	</select>
+	
+	<insert id="insertStock">
+		INSERT INTO stock(product_code,warehouse_no,category,product_name,product_unit,expiry_date,quantity) 
+		VALUES(#{product_code},#{warehouse_no},#{category},#{product_name},#{product_unit},#{expiry_date},#{quantity})
+	</insert> 
+	
+	<update id="updateStockInfoStatusWhenApprovalSuccess">
+		UPDATE stock_info 
+		SET status ='승인' 
+		WHERE identify_code = #{identify_code}  
+	</update>
+	
+	<update id="updateStockInfoStatusWhencancel" parameterType="java.util.Map">
+  		UPDATE stock_info 
+  		SET status ='취소' 
+  		WHERE identify_code IN
+  			<foreach collection="identifyCode" item="code" open="(" separator="," close=")">
+  				#{code}
+  			</foreach>
+  	</update>
+  	
+  	<select id="getwarehouseUseStatusByWarehouseNO" resultType="String">
+  		SELECT use_status
+  		FROM warehouse
+  		WHERE warehouse_no =#{warehouse_no}
+  	</select>
+  	
+  	<update id="updateWarehouseUseStatus" parameterType="com.eatit.warehouseDomain.StockVO">
+  		UPDATE warehouse 
+  		SET use_status = 'Y'  
+  		WHERE warehouse_no =#{warehouse_no}
+  	</update>
+  	
+  	<select id="selectStockOrderByExpiryDate" resultType="StockVO">
+  		SELECT * FROM stock
+  		ORDER BY expiry_date
+  	</select>
+  	
+  	
+  </mapper>	  
+  

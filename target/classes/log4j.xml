@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Appenders -->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
+		</layout>
+	</appender>
+	
+	<!-- Application Loggers -->
+	<logger name="com.eatit.memberController">
+		<level value="debug" />
+	</logger>
+	<logger name="com.eatit.memberPersistence">
+		<level value="debug" />
+	</logger>
+	<logger name="com.eatit.memberService">
+		<level value="debug" />
+	</logger>
+	<logger name="com.eatit.mainController">
+		<level value="debug" />
+	</logger>
+	<logger name="com.eatit.warehouseController">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.warehousePersistence">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.warehouseService">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.businessController">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.businessPersistence">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.businessService">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.masterdataController">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.masterdataPersistence">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.masterdataService">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.MaterialController">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.MaterialPersistence">
+		<level value="debug"/>
+	</logger>
+	<logger name="com.eatit.MaterialService">
+		<level value="debug"/>
+	</logger>
+	<!-- 3rdparty Loggers -->
+	<logger name="org.springframework.core">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.beans">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.context">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.web">
+		<level value="info" />
+	</logger>
+
+	<!-- Root Logger -->
+	<root>
+		<priority value="warn" />
+		<appender-ref ref="console" />
+	</root>
+	
+</log4j:configuration>

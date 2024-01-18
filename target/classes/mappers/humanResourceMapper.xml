@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+
+<mapper namespace="com.eatit.mapper.HrMapper">
+
+	<select id="selectHrContent" resultType="MemberVO">
+		SELECT *
+		FROM member
+		WHERE employee_no = #{employee_no}
+	</select>
+	
+	<select id="selectHrList" resultType="MemberVO">
+  		SELECT * 
+  		FROM member  		
+  		WHERE active='승인'
+  		ORDER BY employee_no desc,regdate desc
+  		LIMIT #{startPage},#{pageSize}
+  	</select>
+  	
+  	<select id="totalCount" resultType="int">
+  		<![CDATA[
+	  		SELECT COUNT(*)
+	  		FROM member
+	  		WHERE employee_no>0
+	  		AND active='승인'
+  		]]>
+  	</select>
+  	
+  	<update id="updateHrContent">
+  		UPDATE member
+  		SET depart_name=#{depart_name},
+  		position_name=#{position_name},
+  		email=#{email},
+  		extension_no=#{extension_no},
+  		contact=#{contact},
+  		address=#{address},
+  		status=#{status}
+  		WHERE employee_no=#{employee_no}
+  	</update>
+  	
+	<select id="selectSearchList" resultType="MemberVO" parameterType="map">
+	    SELECT *
+	    FROM member
+	    WHERE active='승인'
+	    <choose>
+	        <when test="filter == '재직'">
+	            AND status='재직'
+	        </when>
+	        <when test="filter == '휴가'">
+	            AND status='휴가'
+	        </when>
+	        <when test="filter == '휴직'">
+	            AND status='휴직'
+	        </when>
+	        <when test="filter == '퇴직'">
+	            AND status='퇴직'
+	        </when>
+	    </choose>
+	    AND (name LIKE CONCAT('%', #{searchword}, '%')
+	    OR depart_name LIKE CONCAT('%', #{searchword}, '%')
+	    OR position_name LIKE CONCAT('%', #{searchword}, '%')
+	    OR status LIKE CONCAT('%', #{searchword}, '%')
+	    OR employee_no=#{searchword})
+	    ORDER BY employee_no DESC, regdate DESC
+	    LIMIT #{cri.startPage}, #{cri.pageSize}
+	</select>
+	
+	<select id="searchCount" resultType="int">
+  		SELECT COUNT(*)
+  		FROM member
+	    WHERE active='승인'
+	    AND employee_no>0
+	    <choose>
+	        <when test="filter == '재직'">
+	            AND status='재직'
+	        </when>
+	        <when test="filter == '휴가'">
+	            AND status='휴가'
+	        </when>
+	        <when test="filter == '휴직'">
+	            AND status='휴직'
+	        </when>
+	        <when test="filter == '퇴직'">
+	            AND status='퇴직'
+	        </when>
+	    </choose>
+	    AND (employee_no=#{searchword}
+	    OR name LIKE CONCAT('%', #{searchword}, '%')
+	    OR depart_name LIKE CONCAT('%', #{searchword}, '%')
+	    OR position_name LIKE CONCAT('%', #{searchword}, '%')
+	    OR status LIKE CONCAT('%', #{searchword}, '%'))
+  	</select>
+  	
+  	<select id="selectHrRegList" resultType="MemberVO">
+  		SELECT * 
+  		FROM member
+  		WHERE active='대기'
+  		ORDER BY employee_no desc,regdate desc
+  		LIMIT #{startPage},#{pageSize}
+  	</select>
+  	
+  	<select id="regCount" resultType="int">
+  		<![CDATA[
+	  		SELECT COUNT(*)
+	  		FROM member
+	  		WHERE employee_no>0
+	  		AND active='대기'
+  		]]>
+  	</select>
+  	
+  	<update id="updateHrRegActive">
+  		UPDATE member
+  		SET active='승인'
+  		WHERE employee_no=#{employee_no}
+  	</update>
+  	
+  	<delete id="deleteHrRegData">
+  		DELETE FROM member
+  		WHERE employee_no=#{employee_no}  	
+  	</delete>
+</mapper>

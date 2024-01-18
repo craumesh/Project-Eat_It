@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.eatit.mapper.OrdersMapper">
+  
+	  <!-- 테이블 데이터 매핑 -->
+	  <resultMap type="com.eatit.businessDomain.ProductVO" id="productMap">
+	  		<result property="product_no" column="product_no"/>  
+	  		<result property="code" column="code"/>  
+	  		<result property="product_name" column="name"/>  
+	  		<result property="photo_paths" column="photo_paths"/>  
+	  		<result property="category" column="category"/>  
+	  		<result property="category_detail" column="category_detail"/>  
+	  		<result property="company_no" column="company_no"/>  
+	  		<result property="unit" column="unit"/>  
+	  		<result property="unit_quantity" column="unit_quantity"/>  
+	  		<result property="price" column="price"/>  
+	  		<result property="stock_quantity" column="stock_quantity"/>  
+	  		
+ 			<collection property="productList" resultMap="productMap"></collection>
+	  </resultMap>
+
+	  <resultMap type="com.eatit.businessDomain.OrdersVO" id="ordersVO"/>
+	  <resultMap type="com.eatit.memberDomain.MemberVO" id="memberVO"/>
+	  <resultMap type="com.eatit.masterdataDomain.CompanyVO" id="companyVO"/>
+	  
+	  <!-- 전체 내역 조회 -->
+	  <select id="selectOrderlist" resultType="ordersVO">
+	  		SELECT o.*, mi.name "product_name", c.company_name, c.company_tel, s.quantity "stock_quantity"
+	  		FROM orders o
+	  			JOIN company c ON o.company_no = c.company_no
+	  			JOIN masterdata_information mi ON o.product_no = mi.product_no
+	  			LEFT JOIN (SELECT product_code, SUM(quantity) AS quantity
+	  					   FROM stock
+	  					   GROUP BY product_code) s ON mi.code = s.product_code
+	  		WHERE o.delete_status = 0
+	  		ORDER BY o.order_date DESC
+	  		LIMIT #{startPage}, #{pageSize}
+	  </select>
+	  
+	  <!-- 검색 내역 조회 -->
+	  <select id="findOrderList" resultType="ordersVO" parameterType="map">
+			SELECT o.*, mi.name "product_name", c.company_name, c.company_tel, s.quantity "stock_quantity"
+			FROM orders o
+				JOIN company c ON o.company_no = c.company_no
+				JOIN masterdata_information mi ON o.product_no = mi.product_no
+				LEFT JOIN (SELECT product_code, SUM(quantity) AS quantity
+						   FROM stock
+						   GROUP BY product_code) s ON mi.code = s.product_code
+			WHERE delete_status = 0	 
+			<choose>
+			  <when test = "filter == '신청완료'"> AND o.order_status = '신청완료' </when>
+			  <when test = "filter == '생산중'"> AND o.order_status = '생산중' </when>
+			  <when test = "filter == '생산완료'"> AND o.order_status = '생산완료' </when>
+			  <when test = "filter == '배송중'"> AND o.order_status = '배송중' </when>
+			  <when test = "filter == '배송완료'"> AND o.order_status = '배송완료' </when>
+			  <when test = "filter == '처리완료'"> AND o.order_status = '처리완료' </when>
+			  <when test = "filter == '취소'"> AND o.order_status = '취소' </when>
+		  </choose>		  		 		
+			AND (
+				 mi.name LIKE CONCAT('%', #{query}, '%')
+				 OR c.company_name LIKE CONCAT('%', #{query}, '%')
+				 OR o.order_status LIKE CONCAT('%', #{query}, '%')
+				 )
+			ORDER BY o.order_date DESC
+			LIMIT #{cri.startPage}, #{cri.pageSize}
+		</select>
+	  
+	  <!-- 전체 주문 개수 -->
+	  <select id="totalCount" resultType="int">
+	  		SELECT COUNT(*)
+	  		FROM orders
+	  		WHERE delete_status = 0
+	  </select>
+	  
+	  <!-- 검색된 주문 개수 -->
+	  <select id="findCount" resultType="int" parameterType="map">
+			SELECT COUNT(*)
+			FROM orders o
+				JOIN company c ON o.company_no = c.company_no
+				JOIN masterdata_information mi ON o.product_no = mi.product_no
+			WHERE delete_status = 0	
+			<choose>
+			  <when test = "filter == '신청완료'"> AND o.order_status = '신청완료' </when>
+			  <when test = "filter == '생산중'"> AND o.order_status = '생산중' </when>
+			  <when test = "filter == '생산완료'"> AND o.order_status = '생산완료' </when>
+			  <when test = "filter == '배송중'"> AND o.order_status = '배송중' </when>
+			  <when test = "filter == '배송완료'"> AND o.order_status = '배송완료' </when>
+			  <when test = "filter == '처리완료'"> AND o.order_status = '처리완료' </when>
+			  <when test = "filter == '취소'"> AND o.order_status = '취소' </when>
+		  </choose>		  		  		
+			AND (
+					mi.name LIKE CONCAT('%', #{query}, '%')
+					OR c.company_name LIKE CONCAT('%', #{query}, '%')
+					OR o.order_status LIKE CONCAT('%', #{query}, '%')
+				)
+	  </select>
+	  
+	  <!-- 회원 정보 조회 -->
+	  <select id="selectMember" resultMap="memberVO">
+	  		SELECT *
+	  		FROM member
+	  		WHERE id = #{id}	
+	  </select>	  
+	  
+	  <!-- 주문서 작성 -->
+	  <insert id="insertOrder">
+	  		INSERT INTO orders (company_no, employee_no, product_no, quantity, due_date, comments)
+	  		VALUES (#{company_no}, #{employee_no}, #{product_no}, #{quantity}, #{due_date}, #{comments})
+	  </insert>
+	  
+	  <!-- 주문 상세 조회 -->
+	  <select id="selectOrderDetail" resultType="ordersVO">
+	  		SELECT o.*, mi.name "product_name", m.name, c.company_name, c.company_tel, c.company_address, c.company_address_detail, c.photo_paths
+	  		FROM orders o
+	  			JOIN masterdata_information mi ON o.product_no = mi.product_no
+	  			JOIN member m ON o.employee_no = m.employee_no
+	  			JOIN company c ON o.company_no = c.company_no
+	  		WHERE o.order_id = #{order_id}
+	  </select>
+	  
+	  <!-- 전체 거래처 조회 -->
+	  <select id="selectCompanyList" resultMap="companyVO">
+	  		SELECT *
+	  		FROM company
+	  		LIMIT #{startPage}, #{pageSize}
+	  </select>	 
+	  
+	  <!-- 전체 거래처 수 조회 -->
+	  <select id="selectCountTotalCompany" resultType="int">
+	  		SELECT COUNT(*)
+	  		FROM company
+	  </select>
+	  
+	  <!-- 검색, 필터 거래처 수 조회 -->
+	  <select id="selectCountMatchingCompany" resultType="int" parameterType="map">
+	  		SELECT COUNT(*)
+	  		FROM company
+	  		WHERE company_name LIKE CONCAT('%', #{query}, '%')
+	  		OR company_address LIKE CONCAT('%', #{query}, '%')
+	  		OR company_manager LIKE CONCAT('%', #{query}, '%')
+	  		OR company_zip_code LIKE CONCAT('%', #{query}, '%')
+	  		OR company_tel LIKE CONCAT('%', #{query}, '%')	  		
+	  </select>	   
+	  
+	  <!-- 검색 거래처 조회 -->
+	  <select id="findCompany" resultMap="companyVO" parameterType="map">
+	  		SELECT *
+	  		FROM company
+	  		WHERE company_name LIKE CONCAT('%', #{query}, '%')
+	  		OR company_address LIKE CONCAT('%', #{query}, '%')
+	  		OR company_manager LIKE CONCAT('%', #{query}, '%')
+	  		OR company_zip_code LIKE CONCAT('%', #{query}, '%')
+	  		OR company_tel LIKE CONCAT('%', #{query}, '%')
+			LIMIT #{cri.startPage}, #{cri.pageSize}		  		
+	  </select>	   
+	  
+	  <!-- 거래처 선택 -->
+	  <select id="selectCompany" resultMap="companyVO">
+	  		SELECT *
+	  		FROM company
+	  		WHERE company_no = #{company_no}
+	  </select>	   
+	    
+	  <!-- 전체 상품 수 조회 -->
+	  <select id="selectCountTotalProduct" resultType="int">
+	  		SELECT COUNT(*)
+	  		FROM masterdata_information
+	  		WHERE category = "완제품"
+	  </select>
+	  
+	  <!-- 검색, 필터 상품 수 조회 -->
+	  <select id="selectCountMatchingProduct" resultType="integer" parameterType="map">
+	  		SELECT COUNT(*)
+	  		FROM masterdata_information
+	  		WHERE category = "완제품"
+	  		<choose>
+			  <when test = "filter == '케이크'"> AND category_detail = '케이크' </when>
+			  <when test = "filter == '쿠키'"> AND category_detail = '쿠키' </when>
+		  	</choose>		
+	  		AND name LIKE CONCAT('%', #{query}, '%')
+	  </select>
+	  
+	  <!-- 전체 상품 조회 -->
+	  <select id="selectProductList" resultMap="productMap" parameterType="map">
+			SELECT mi.*, s.quantity "stock_quantity"
+			FROM masterdata_information mi
+				LEFT JOIN (SELECT product_code, SUM(quantity) AS quantity
+						   FROM stock
+						   GROUP BY product_code) s ON mi.code = s.product_code
+			WHERE mi.category = "완제품"
+			ORDER BY category_detail ASC
+			LIMIT #{startPage}, #{pageSize}	
+	  </select>
+	  
+	  <!-- 검색 상품 조회 -->
+	  <select id="findProduct" resultMap="productMap" parameterType="map">
+	  		SELECT *
+	  		FROM masterdata_information
+	  		WHERE name LIKE CONCAT('%', #{query}, '%')
+	  		<choose>
+			  <when test = "filter == '케이크'"> AND category_detail = '케이크' </when>
+			  <when test = "filter == '쿠키'"> AND category_detail = '쿠키' </when>
+		  	</choose>		
+	  		AND category = "완제품"
+	  		ORDER BY category_detail
+	  		LIMIT #{cri.startPage}, #{cri.pageSize}	
+	  </select>
+	  
+	  <!-- 상품 선택 -->
+	  <select id="selectProduct" resultType="productVO">
+			SELECT *, name "product_name"
+	  		FROM masterdata_information
+	  		WHERE product_no = #{product_no}
+	  </select>	  
+	  
+	  <!-- 발주서 수정 -->
+	  <update id="updateForm">
+	  		UPDATE orders SET due_date = #{due_date}, comments = #{comments}, update_date = NOW()
+	  		WHERE order_id = #{order_id} 
+	  </update>
+	  
+	  <!-- 발주서 삭제 -->
+	  <update id="deleteForm">
+	  		UPDATE orders SET order_status = "취소", update_date = NOW(), delete_status = 1
+	  		WHERE order_id = #{order_id}
+	  </update>
+	  
+	  <select id="selectproduct" resultType="ordersVO" >
+      <![CDATA[
+  SELECT o.*, mi.name "product_name", c.company_name, c.company_tel, s.quantity "stock_quantity"
+  FROM orders o
+  JOIN company c ON o.company_no = c.company_no
+  JOIN masterdata_information mi ON o.product_no = mi.product_no
+  LEFT JOIN (SELECT product_code, SUM(quantity) AS quantity
+  FROM stock
+  GROUP BY product_code) s ON mi.code = s.product_code
+  WHERE o.delete_status = 0 and (s.quantity < o.quantity or s.quantity is null) and o.order_status ='신청완료' 
+  ORDER BY o.order_date DESC
+  LIMIT #{startPage}, #{pageSize}
+  ]]>
+     </select>
+     
+     <select id="selectproductcount" resultType="int">
+     <![CDATA[
+  SELECT count(*)
+  FROM orders o
+  JOIN company c ON o.company_no = c.company_no
+  JOIN masterdata_information mi ON o.product_no = mi.product_no
+  LEFT JOIN (SELECT product_code, SUM(quantity) AS quantity
+  FROM stock
+  GROUP BY product_code) s ON mi.code = s.product_code
+  WHERE o.delete_status = 0 and (s.quantity < o.quantity or s.quantity is null) and o.order_status ='신청완료' 
+  ORDER BY o.order_date DESC;
+  ]]>
+     </select>
+	  	    
+  </mapper>

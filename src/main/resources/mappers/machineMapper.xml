@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.eatit.mapper.machineMapper">
+  
+  <resultMap type="com.eatit.machineDomain.machineVO" id="machineVO">
+  	<result property="machine_code" column="machine_code"/>
+  	<result property="machine_name" column="machine_name"/>
+  	<result property="machine_status" column="machine_status"/>
+  	<result property="employee_no" column="employee_no"/>
+  	<result property="purpose_of_use" column="purpose_of_use"/>
+  	<result property="installation_date" column="installation_date"/>
+  	<result property="machine_location" column="machine_location"/>
+  	<result property="order_id" column="order_id"/>
+  	<result property="name" column="name"/>
+  	<collection property="infolist" resultMap="machinehistoryVO"></collection>
+  	<collection property="ordersVOlist" resultMap="ordersVO"></collection>
+  	<collection property="masterdataVOlist" resultMap="masterdata_informationVO"></collection>
+  </resultMap>
+  
+  <!-- machinehistoryVO -->
+<resultMap type="com.eatit.machineDomain.machinehistoryVO" id="machinehistoryVO">
+  	<result property="history_no" column="history_no"/>
+  	<result property="machine_code" column="machine_code"/>
+  	<result property="operating_time" column="operating_time"/>
+  	<result property="use_history" column="use_history"/>
+  	<result property="check_purpose" column="check_purpose"/>
+  	<result property="check_time" column="check_time"/>
+  	<result property="employee_no" column="employee_no"/>
+  	<result property="machine_update" column="machine_update"/>
+  	<result property="machine_update_date" column="machine_update_date"/>
+  	<result property="product_time" column="product_time"/>
+</resultMap>  
+
+<!-- ordersVO -->
+<resultMap type="com.eatit.businessDomain.OrdersVO" id="ordersVO">
+  	<result property="order_id" column="order_id"/>
+  	<result property="company_no" column="company_no"/>
+  	<result property="employee_no" column="employee_no"/>
+  	<result property="quantity" column="quantity"/>
+  	<result property="quantity" column="quantity"/>
+  	<result property="order_date" column="order_date"/>
+  	<result property="due_date" column="due_date"/>
+  	<result property="comments" column="comments"/>
+  	<result property="order_status" column="order_status"/>
+  	<result property="update_date" column="update_date"/>
+  	<result property="delete_status" column="delete_status"/>
+</resultMap>  
+
+<!-- masterdata_informationVO -->
+<resultMap type="com.eatit.productionDomain.masterdata_informationVO" id="masterdata_informationVO">
+  	<result property="product_no" column="product_no"/>
+  	<result property="code" column="code"/>
+  	<result property="photo_paths" column="photo_paths"/>
+  	<result property="category" column="category"/>
+  	<result property="category_detail" column="category_detail"/>
+  	<result property="company_no" column="company_no"/>
+  	<result property="unit" column="unit"/>
+  	<result property="unit_quantity" column="unit_quantity"/>
+  	<result property="price" column="price"/>
+  	<result property="EXP_intervar" column="EXP_intervar" />
+  	<result property="recipe" column="recipe"/>
+</resultMap>  
+
+
+
+
+
+  <!-- 설비 추가  -->
+  <insert id="insertmachine">
+  insert into machine(machine_name,employee_no,installation_date,machine_location)
+  values(#{machine_name},#{employee_no},#{installation_date},#{machine_location})
+  </insert>
+  
+  <!-- 설비 추가 기록 -->
+  <insert id="machinehistory">
+   insert into machine_history(machine_code,operating_time, use_history, check_purpose, check_time, employee_no, machine_update, machine_update_date)
+   values(#{machine_code},now(),'설치 후 작동 테스트', '설치 후 작동 점검',now() ,#{employee_no},'추가',now())
+   </insert>
+  
+  <!-- 설비 조회 -->
+  <select id="getmachinelist" resultType="machineVO">
+   SELECT a.machine_code, a.machine_name, a.machine_status, b.name, a.purpose_of_use, a.machine_location, a.installation_date, c.machine_update_date
+  FROM machine AS a
+  JOIN member AS b ON a.employee_no = b.employee_no
+  JOIN (
+    SELECT machine_code, MAX(machine_update_date) AS machine_update_date
+    FROM machine_history
+    WHERE machine_update != '삭제'
+    GROUP BY machine_code
+    ) AS c ON a.machine_code = c.machine_code
+  WHERE a.machine_code NOT IN (
+    SELECT machine_code
+    FROM machine_history
+    WHERE machine_update = '삭제'
+	)
+  LIMIT #{startPage},#{pageSize}
+  </select>
+  
+  <!-- 특정 설비 상세 조회 -->
+  <select id="machineinfo" resultMap="machineVO">
+  SELECT *
+  FROM machine as a
+  JOIN machine_history as b 
+  ON a.machine_code = b.machine_code
+  join member as c
+  on a.employee_no = c.employee_no
+  where a.machine_code = #{machine_code}
+  ORDER BY machine_update_date DESC
+  LIMIT 1
+  </select>
+  
+  
+  <!-- 설비 전체 조회 -->
+  <select id="machinelistall" resultMap="machineVO">
+  SELECT a.machine_name, a.machine_code, c.name, b.use_history, b.operating_time, MAX(b.machine_update_date) AS machine_update_date, a.machine_status  
+  FROM machine AS a  
+  JOIN member AS c ON a.employee_no = c.employee_no 
+  JOIN (
+  SELECT machine_code, MAX(machine_update_date) AS machine_update_date, MAX(use_history) AS use_history, MAX(operating_time) AS operating_time
+  FROM machine_history
+  WHERE machine_update != '삭제' 
+  GROUP BY machine_code
+  ) AS b ON a.machine_code = b.machine_code 
+  GROUP BY a.machine_code, a.machine_name, c.name, b.use_history, b.operating_time, a.machine_status  
+ ORDER BY
+  CASE
+    WHEN a.machine_status LIKE '%완료%' THEN 0
+    WHEN a.machine_status LIKE '%생산중%' THEN 0
+    ELSE 1
+  END,
+  CASE
+    WHEN a.machine_status LIKE '%고장%' THEN 1
+    ELSE 0
+  END,
+  a.machine_status
+  LIMIT #{startPage},#{pageSize}
+  
+  </select>
+  
+  <!-- 설비 최신 코드 -->
+  <select id="getmachinecode"  resultType="int">
+  select max(machine_code)+1
+  from machine
+  </select>
+  
+  
+  <!-- 직책이 설비인 사람 조회 -->
+  <select id="member" resultType="com.eatit.memberDomain.MemberVO">
+ select employee_no, name
+ from member
+ where position_name ='설비' and status = '재직'; 
+  </select>
+  
+  <!-- 설비 정보 업데이트 -->
+  <update id="machineupdate">
+  UPDATE machine
+  SET machine_status = #{machine_status}, employee_no = (SELECT employee_no FROM member WHERE name = #{name})
+  WHERE machine_code = #{machine_code}
+  </update>
+  
+  <!-- 설비 삭제 -->
+  <delete id="machinedelete">
+  delete from machine
+  where machine_code = #{machine_code}
+  </delete>
+  
+  <!-- 설비 삭제 업데이트 -->
+  <update id="machinedeleteupdate">
+  UPDATE machine_history
+  SET machine_update = '삭제', machine_update_date = now()
+  WHERE machine_code = #{machine_code}
+  ORDER BY machine_update_date DESC
+  LIMIT 1
+  </update>
+  
+  <!-- 페이징 처리 갯수 -->
+  	<select id="totalCount" resultType="int">
+  		<![CDATA[
+	  		SELECT COUNT(*)
+	  		FROM machine
+	  		WHERE machine_code > 0
+  		]]>
+  	</select>
+  	
+  <!-- 특정 설비 상세 조회 + 생산정보 조회-->
+  <select id="productstatus" resultMap="machineVO">
+ <!--  SELECT a.machine_code, a.machine_name, a.machine_status,a.order_id, b.operating_time, d.company_no, d.product_no, e.code, e.name, f.recipe -->
+  select *
+  FROM machine as a
+  JOIN machine_history as b 
+  ON a.machine_code = b.machine_code
+  join orders as d
+  on a.order_id = d.order_id
+  join masterdata_information as e
+  on d.product_no = e.product_no
+  where a.machine_code = #{machine_code}
+  ORDER BY machine_update_date DESC
+  LIMIT 1;
+  </select>
+	
+	<!-- 생산 대기인 설비 -->
+	<select id="machinecategory" resultMap="machineVO">
+	select machine_name, machine_code
+	from machine
+	where machine_status = '생산 대기'
+	</select>
+
+
+  
+  
+  </mapper>
