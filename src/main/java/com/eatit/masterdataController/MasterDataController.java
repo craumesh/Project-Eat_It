@@ -35,6 +35,7 @@ public class MasterDataController {
 	@RequestMapping(value = "/BomMain", method = RequestMethod.GET)
 	public void mainGET() {
 
+		
 	}
 
 	@RequestMapping(value = "/PIMinsert", method = RequestMethod.POST)
