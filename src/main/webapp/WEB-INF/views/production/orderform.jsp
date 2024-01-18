@@ -147,8 +147,8 @@
             </div>
             <div class="modal-body p-5">
                 <div id="tableContainer">
-                    <form action="/production/production" id="myForm" method="post" class="d-flex">
-                        <table class="table align-items-center mb-0">
+                    <form id=editform method="post" class="d-flex">
+                        <table class="table align-items-center mb-0" name="view-table">
                             <tbody id="statusTableBody">
 
                              <tr>
@@ -160,9 +160,17 @@
 							
 							 </td>
 							</tr>
+							<tr>
+							<th class="text-center fs-5"> 관리자 : </th>
+							 <td class="fs-5" id=employeename>
+							${name }
+							 </td>
+							</tr>
 							
 							<tr>
-							<th class="text-center fs-5"> 생산 제품 :  </th>
+							<th class="text-center fs-5"> 생산 제품 :  
+							
+							</th>
 							<td class="fs-5" id="product_name"> </td>
 							</tr>
 							
@@ -173,13 +181,15 @@
 							
 							
 							
+							
+							
 					</tbody>
 						</table>
 						
 						<table class="table align-items-center mb-0">
 							<tbody id="tdadd">
 							<tr>
-							<th class="text-center fs-5" colspan="2"> 레시피  </th>
+							<th class="text-center fs-5" colspan="4"> 레시피  </th>
 							</tr>
 							
 							
@@ -189,7 +199,7 @@
                     </form>
                 </div>
                         <div class="text-center">
-                            <button class="btn bg-gradient-danger fs-6 mb-0 py-2 px-3" onclick="registerEquipment()">생산지시</button>
+                            <button class="btn bg-gradient-danger fs-6 mb-0 py-2 px-3" id="editbtn" onclick="registAlert()">생산지시</button>
                             <button class="btn bg-gradient-dark fs-6 mb-0 py-2 px-3 me-3" onclick="closeWindow()">취소</button>
                         </div>
             </div>
@@ -211,7 +221,10 @@
 		        method: 'GET',
 		        dataType: 'json',
 		        success: function(data) {
-
+					
+		        	console.log(data);
+		        	console.log(data.house);
+		        	
 		        	
 		        	var newSelect = $("<select>").attr("name", "machine_code").addClass("w-100 text-center");
 		        	addOptionsToSelect(newSelect, data.machine);
@@ -220,23 +233,60 @@
 		        	$("#machinelist").append(newSelect);	
 		            $("#order_id").text(data.Detail.order_id);
 		            $("#product_name").text(data.Detail.product_name);
-		            $("#quantity").text(data.Detail.quantity);
+		            var originalQuantity = parseFloat(data.Detail.quantity);
+	                   if (!isNaN(originalQuantity)) {
+	                 var increasedQuantity = originalQuantity * 1.2;
+	                 $("#quantity").text(increasedQuantity);
+	               }
 		            $("#recipe").text(data.recipe);
+		            
 		            $("#openmodalRequest").modal('show');
 					
-		            var $tdadd = $("#tdadd");
 		            
-		            if (data.recipe !== '미등록') {      
+		            var $registerEquipmentBtn = $(".btn.bg-gradient-danger");
+		            if (data.recipe !== '미등록') {
 		                var recipe = JSON.parse(data.recipe)[data.Detail.product_no];
-		                
-		                  for (var key in recipe) {
-		                   var value = recipe[key]*data.Detail.quantity;
-		                   $tdadd.append("<tr><td class='text-center fs-5'>" + key + "</td><td class='text-center fs-5'>" + value + "</td></tr>");
+		                var enableButton = true;
 
-		                }                 
-		             }
-		            
-		            
+		                for (var key in recipe) {
+		                    var value = recipe[key] * data.Detail.quantity;
+ 		                    var houseValue = data.house[key];
+
+		                    if (houseValue < value) {
+		                        enableButton = false;
+		                        break;
+		                    }
+		                }
+		                $registerEquipmentBtn.prop("disabled", !enableButton);
+		            } else {
+
+		                $registerEquipmentBtn.prop("disabled", true);
+		            }
+
+		            var $tdadd = $("#tdadd");
+		            if (data.recipe !== '미등록') {
+		                var recipe = JSON.parse(data.recipe)[data.Detail.product_no];
+
+		                for (var key in recipe) {
+		                    var value = recipe[key] * data.Detail.quantity;
+		                    var houseValue = data.house[key];
+
+		                    var $tr = $("<tr>");
+		                    $tr.append("<td class='text-center fs-5' name='materialGroup'>" + key + "</td>");
+		                    $tr.append("<td class='text-center fs-5' name='requiredGroup'>" + value + "</td>");
+		                    $tr.append("<td class='text-center fs-5'>/</td>");
+
+		                    var $tdHouseValue = $("<td class='text-center fs-5'>").text(houseValue);
+		                    if (value > houseValue) {
+		                        $tdHouseValue.addClass('text-danger');
+		                    }
+		                    $tr.append($tdHouseValue);
+
+		                    $tdadd.append($tr);
+		                }
+		            }
+
+		            $("#openmodalRequest").modal('show');
 		        },
 		        error: function(error) {
 		            console.log('에러:', error);
@@ -244,8 +294,11 @@
 		    });
 		});
 		
+
+		
 		function closeModal() {
 		    $("#openmodalRequest").modal('hide');
+		    location.reload();
 		}
 		
 		function closeWindow() {
@@ -263,6 +316,59 @@
 		   }
 		    
 		
+		$("#editbtn").click(function(event) {
+			event.preventDefault();
+			var recipeData = [];
+
+		    $("#tdadd tr").each(function() {
+		        var materialGroup = $(this).find("td[name='materialGroup']").text();
+		        var requiredGroup = $(this).find("td[name='requiredGroup']").text();
+
+		        recipeData.push({
+		            materialGroup: materialGroup,
+		            requiredGroup: requiredGroup
+		        });
+		    });
+		    
+		    var orderId = $("#order_id").text();
+		    var machineCode = $("#machinelist select").val();
+		    var quantity = $("#quantity").text();
+		    var match = machineCode.match(/_(\d+)$/);
+		    var extractedNumber = match ? parseInt(match[1]) : 0;
+		    
+		   
+
+		    $.ajax({
+		        type: "POST",
+		        url: "/production/orderform?orderId=" + orderId + "&machineCode=" + extractedNumber + "&quantity=" + quantity,
+		        data: JSON.stringify({ recipeData: recipeData }),
+		        contentType: "application/json",
+		        success: function(response) {
+		            console.log("서버 응답:", response);
+		            closeModal();
+		            window.close();
+		        },
+		        error: function(error) {
+		            console.error("에러:", error);
+		        }
+		    });
+		});
+			
+			
+		 
+		 function registAlert(){
+		      swal({
+		         text: "생산 지시 완료",
+		         icon: "success",
+		         buttons: false
+		      });
+		      
+		      
+		      setTimeout(function() {
+		        document.forms["fr"].submit();
+		      }, 700);
+		      
+		   }
 		
 		
 </script>

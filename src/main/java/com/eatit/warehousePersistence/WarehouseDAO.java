@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.eatit.mainDomain.Criteria;
 import com.eatit.memberDomain.MemberVO;
+import com.eatit.productionDomain.production_warehouseVO;
 import com.eatit.warehouseDomain.StockInfoVO;
 import com.eatit.warehouseDomain.StockVO;
 import com.eatit.warehouseDomain.WarehouseVO;
@@ -78,7 +79,7 @@ public interface WarehouseDAO {
 	public void insertStockInfoIntoStock(StockVO vo);
 	
 	// 창고 정보 테이블 승인 후 update
-	public void updateStockInfoStatusWhenApprovalSuccess(StockVO vo);
+	public int updateStockInfoStatusWhenApprovalSuccess(StockVO vo);
 	
 	// 창고 입출고 선택한 요소 배열로 받아서 Map에 넣고 update
 	public void updateStockInfoStatusWhenCancel(String[] identifyCode);
@@ -90,7 +91,7 @@ public interface WarehouseDAO {
 	public void updateWarehouseUseStatus(StockVO vo);
 	
 	// 창고 조회(그냥 조회)
-	public List<StockVO> getStockList();
+	public List<StockVO> getStockListALL();
 	
 	// 창고 리스트 총갯수(검색어 x, 필터 x) - 페이징
 	public int getStockTotalCount(); 
@@ -104,7 +105,26 @@ public interface WarehouseDAO {
 	// 입출고 정보 테이블 모두 조회(검색어 o, 필터 o) - 페이징
 	public List<StockVO> getFindStockListCount(Map<String, Object> params);
 	
-	// 재미있는 선입선출
-	public List<StockVO> getStockOrderByExpiryDateList();
+	// 제품 코드에 대한 재고 리스트
+	public List<StockVO> getStockOrderByExpiryDateList(String productCode);
+	
+	// 제품 코드에 대한 재고 수량 리스트
+	public List<Integer> selectQuantityOrderByExpiryDateList(String identifyCode);
+	
+	// 재고 수량 업데이트
+	public void updateQuantity(StockVO setOutVO);
+	
+	// 재고를 생산 창고 테이블에 insert
+	public void insertStockIntoPoductionWarehouse(production_warehouseVO pdwVO);
+	
+	// 재고를 생산 창고 테이블에 update
+	public void updateStockIntoPoductionWarehouse(production_warehouseVO pdwVO);
+	
+	// 창고 재고 삭제
+	public void deleteStock(String[] identifyCode);
+	
+	// 생산 창고 내부 값 확인
+	public int selectNameCheck(StockVO vo);
 
+	public production_warehouseVO selectNameTotal(StockVO vo);
 }

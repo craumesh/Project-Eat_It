@@ -18,7 +18,7 @@
 		</div>		
 		<div class="card-body mx-5 px-0 pb-4">
 			<div class="table-responsive p-0">
-               <form id="" method="post" class="d-flex">
+               <form id="editform" method="post" class="d-flex">
                   <table id="edit-table" class="table h-25 ms-3">
                      <thead>
                         <tr class="row">
@@ -45,7 +45,7 @@
                   </table>
                </form>      
                <div class="col-6 w-100 text-end">		
-			 		<button class="btn bg-gradient-dark fs-6 mb-0 py-2 px-3 me-3" onclick="requrst()">자재 요청</button>
+			 		<button class="btn bg-gradient-dark fs-6 mb-0 py-2 px-3 me-3" id="editbtn">자재 요청</button>
 					<button class="btn bg-gradient-dark fs-6 mb-0 py-2 px-3 me-3" onclick="closeWindow()">닫기</button>
                </div>
             </div>
@@ -123,6 +123,76 @@
 		           newOption.text(optionValue).appendTo(selectElement);
 		       });
 		   }
+		   
+		   $("#editbtn").click(function(){
+				if ($("#edit-table").hasClass("d-none")) {
+					$("#editbtn").text("수정 완료");
+					
+					$("#view-table").find('tbody tr').each(function() {		       
+				            var material = $(this).find('td').find('.material-input');
+				            var required = $(this).find('td').find('.required-input');
+				           
+				            addRequiredEditTr(materialNamesArr, material.val(), required.val());
+				    });
+					
+					toggleTable();
+				} else {
+					var isEmpty = false;
+					var isDuplication = false;
+					
+					var selectedValues = new Set();
+
+					$('.materialGroup').each(function() {
+					    var selectedValue = $(this).val();
+					    if (selectedValues.has(selectedValue)) {
+					    	isDuplication = true;
+					        return false;
+					    } else {
+					        selectedValues.add(selectedValue);
+					    }
+					});
+					
+					$('.requiredGroup').each(function(){
+						if ($(this).val().trim() === '') {
+							isEmpty = true;
+							return false;
+						}
+					});
+					
+					if(isEmpty){
+						swal({
+							  title: "소요량이 비어있습니다!",
+							  text: "필요없는 자재를 제거하거나 소요량을 입력하세요!",
+							  icon: "warning",
+							  button: "확인",
+							});
+					} else if(isDuplication) {
+				    	swal({
+							  title: "중복된 자재가 있습니다!",
+							  text: "중복된 자재를 제거하거나 변경하세요!",
+							  icon: "warning",
+							  button: "확인",
+							});
+					} else {
+						swal({
+							  title: "자재 요청을 하시겠습니까?",
+							  text: "수량을 꼭 확인하세요!",
+							  icon: "warning",
+							  buttons: true,
+							  dangerMode: true,
+							})
+							.then((willDelete) => {
+							  if (willDelete) {
+								swal("당신은 정말 잔인한 사람이에요!", {icon: "success"}).then(function(){				
+									$("#editform").submit();                
+								});							
+							  } else {
+							    swal("최소하셨습니다");
+							  }
+						});	
+					}
+				}		    
+			});	
 		   
 		   
     

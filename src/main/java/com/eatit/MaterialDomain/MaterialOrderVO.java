@@ -13,7 +13,6 @@ public class MaterialOrderVO {
 	private Integer materialod_id;
 	private Integer company_no;
 	private Timestamp materialod_date;
-	private Timestamp materialod_update;
 	private Integer product_no;
 	private Integer quantity;
 	private Integer employee_no;

@@ -13,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.eatit.businessDomain.DeliveryVO;
 import com.eatit.businessDomain.OrdersVO;
@@ -65,11 +67,11 @@ public class DeliveryController {
 	}	
 
 	// 출고 요청 - GET
-	@RequestMapping(value = "forms", method = RequestMethod.GET)
-	public void deliveryRequestGET(Model model, HttpSession session,
+	@RequestMapping(value = "/forms", method = RequestMethod.GET)
+	public void releaseRequestGET(Model model, HttpSession session,
 								   @RequestParam(name = "order_id") Integer order_id) {
 		
-		logger.debug("deliveryRequestGET(model, session)");
+		logger.debug("Controller: /deliverys/forms/releaseRequestGET(model, order_id)");
 		
 		String id = (String)session.getAttribute("id");
 		MemberVO memberVO = dService.getMemberInfo(id);
@@ -79,6 +81,65 @@ public class DeliveryController {
 		
 		model.addAttribute(memberVO);
 		model.addAttribute(ordersVO);
+	}
+	
+	// 출고 요청 - POST
+	@RequestMapping(value = "/forms", method = RequestMethod.POST)
+	public String releaseRequestPOST(DeliveryVO dvo, RedirectAttributes rttr,
+									@RequestParam(name = "order_id") Integer order_id) {
+		
+		logger.debug("Controller: /deliverys/forms/deliveryRequestPOST()");
+		
+		dService.requestDelivery(dvo);
+		dService.requestRelease(order_id);
+		oService.changeOrderStatusToShippingPreparation(order_id);
+		
+		rttr.addFlashAttribute("result", "CREATEOK");
+		
+		return "redirect:/warehouse/registClose";
+	}
+	
+	// 배송 요청 - GET 
+	@RequestMapping(value = "/ships", method = RequestMethod.GET)
+	public void deliveryRequestGET(Model model, HttpSession session,
+			   					   @RequestParam(name = "delivery_id") Integer delivery_id) {
+		
+		logger.debug("Controller: /deliverys/forms/deliveryRequestGET(model, delivery_id)");
+		
+		String id = (String)session.getAttribute("id");
+		MemberVO memberVO = dService.getMemberInfo(id);
+		DeliveryVO deliveryVO = dService.getDeliveryDetail(delivery_id);
+		
+		model.addAttribute(memberVO);
+		model.addAttribute(deliveryVO);
+	}
+	
+	// 배송 요청 - POST
+	@RequestMapping(value = "/ships", method = RequestMethod.POST)
+	public String deliveryRequestPOST(RedirectAttributes rttr, 
+			                          @RequestParam(name = "delivery_id") Integer delivery_id,
+			                          @RequestParam(name = "employee_no") Integer employee_no,
+			                          Map<String, Object> params) {
+		
+		logger.debug("Controller: /deliverys/forms/deliveryRequestPOST(dvo, rttr)");
+		
+		params.put("delivery_id", delivery_id);
+		params.put("employee_no", employee_no);
+		dService.startDelivery(params);
+		oService.updateOrderStatusToDelivering(delivery_id);
+		
+		return "redirect:/warehouse/registClose";
+	}
+	
+	// 배송완료 - POST
+	@RequestMapping(value = "/success", method = RequestMethod.POST)
+	@ResponseBody
+	public void deliveryCompletePost(@RequestParam(name = "delivery_id") Integer delivery_id) {
+		
+		logger.debug("Controller: /deliverys/deliveryCompletePost(delivery_id)");
+		
+		dService.completeDelivery(delivery_id);
+		oService.completeOrder(delivery_id);	
 	}
 	
 }

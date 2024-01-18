@@ -16,11 +16,17 @@
 			  </button>
 			  <ul class="dropdown-menu w-80" aria-labelledby="totalDropdownMenuButton">
    			  	<li>
-   			  		<a class="dropdown-item fs-6" href="${path}/masterdata/BomMain">BOM 관리</a>
+   			  		<a class="dropdown-item fs-6" href="${path}/masterdata/PIM">품목정보 관리</a>
 		  		</li>
 				<li>
-					<a class="dropdown-item fs-6" href="${path}/masterdata/QualityManagement">설비정보관리</a>
+					<a class="dropdown-item fs-6" href="${path}/masterdata/MIM">원자재정보 관리</a>
 				</li>
+				<li>
+					<a class="dropdown-item fs-6" href="${path}/masterdata/CIM">소요량 관리</a>
+				</li>
+<!-- 				<li> -->
+<%-- 					<a class="dropdown-item fs-6" href="${path}/masterdata/QIM">품질 관리</a> --%>
+<!-- 				</li> -->
 			  </ul>
 		 </div>
    		 <div class="dropdown mb-3 ms-4-5 w-100">
@@ -29,10 +35,10 @@
  		    </button>
 	  		<ul class="dropdown-menu w-80" aria-labelledby="materialDropdownMenuButton">
 			    <li>
-			    	<a class="dropdown-item fs-6" href="/Material/materialadd">자재 입출고 관리</a>
+			    	<a class="dropdown-item fs-6" href="/Material/MaterialOrderList">자재 발주 내역</a>
 			    </li>
 			    <li>
-			    	<a class="dropdown-item fs-6" href="/Material/MaterialOrderList">자재 발주 내역</a>
+			    	<a class="dropdown-item fs-6" href="/Material/materialadd">자재 입출고 관리</a>
 			    </li>
 			    <li>
 			    	<a class="dropdown-item fs-6" href="/Material/list">자재 정보 관리</a>
@@ -49,9 +55,6 @@
 			    </li>
 			    <li>
 			    	<a class="dropdown-item fs-6" href="/production/production">생산 관리</a>
-			    </li>
-			    <li>
-			    	<a class="dropdown-item fs-6" href="#">서브메뉴 3</a>
 			    </li>
 	  		</ul>
 		</div>

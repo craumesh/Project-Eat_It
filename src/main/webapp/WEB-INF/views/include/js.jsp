@@ -114,9 +114,7 @@ if(result == "WAIT"){
   <script>
 	var infoModal = document.getElementById("InfoModal");
 
-	$(document).ready(function() {			
-		var urlParams = window.location.href;	
-		
+	$(document).ready(function() {					
 		$("#profileBtn").click(function() {
 			$.ajax({
 				url : '/members/profile',
@@ -167,7 +165,6 @@ if(result == "WAIT"){
 					  if (willDelete) {
 						swal("당신은 정말 잔인한 사람이에요!", {icon: "success"}).then(function(){
 							$("#infoClosebtn").click(); 
-							$("#infoPrev-url-forSubmit").val(urlParams);
 							$("#infoEdit-form").submit();                
 						});							
 					  } else {

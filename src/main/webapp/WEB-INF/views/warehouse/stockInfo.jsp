@@ -24,8 +24,7 @@
 				</form>
 				</div>
 			</div>
-			
-			<div class="card-body px-0 pb-2 z-index-0">
+			<div class="card-body px-0 pb-2 z-index-1">
 				<div class="table-responsive p-0 min-vh-65">
 					<form role="form" method="post" class="w-sm-auto">
 					<input type="hidden" id="searchword-forSubmit" name="searchword">
@@ -46,7 +45,7 @@
 								<th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">단위</th>
 								<th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">가격(만원)</th>
 								<th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">유통기한</th>
-								<th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">입출고일</th>
+								<th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">입출고 요청일</th>
 								<th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 px-1">처리상태</th>
 								<th class="text-center font-weight-bolder col-1 px-1">
 									<div class="dropdown">
@@ -119,7 +118,7 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-5">
-						<div class="ms-6">Showing ${pageVO.startPage } to ${pageVO.endPage } of 미구현 entries</div>
+						<div class="ms-6">Showing ${pageVO.startPage } to ${pageVO.endPage } </div>
 					</div>
 					<div class="col-sm-6 mb-3">
 						<ul class="pagination">

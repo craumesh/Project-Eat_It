@@ -150,4 +150,34 @@ public class OrdersServiceImpl implements OrdersService {
 		return odao.selectproductcount();
 	}
 
+	@Override
+	public void changeOrderStatusToShippingPreparation(Integer order_id) {
+		logger.debug("Service: changeOrderStatusToShippingPreparation(order_id)");
+		odao.updateOrderStatusToShippingPreparation(order_id);	
+	}
+
+	@Override
+	public void updateOrderStatusToDelivering(Integer delivery_id) {
+		logger.debug("Service: updateOrderStatusToDelivering(delivery_id)");
+		odao.updateOrderStatusToDelivering(delivery_id);
+	}
+
+	@Override
+	public void completeOrder(Integer delivery_id) {
+		logger.debug("Service: completeOrder(delivery_id)");
+		odao.updateOrderComplete(delivery_id);
+	}
+
+	@Override
+	public void updateOrderStatusToReleaseComplete(Integer order_id) {
+		logger.debug("Service: updateOrderStatusToReleaseComplete(order_id)");
+		odao.updateOrderStatusToReleaseComplete(order_id);
+	}
+
+	@Override
+	public void startProduction(Integer order_id) {
+		logger.debug("Service: startProduction(order_id)");
+		odao.updateOrderStatusToProducing(order_id);
+	}
+
 }

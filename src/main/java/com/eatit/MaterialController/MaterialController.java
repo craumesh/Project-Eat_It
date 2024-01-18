@@ -34,30 +34,33 @@ public class MaterialController {
 	@Inject
 	private MaterialService MaterialService;
 
-	// 원자재 목록 조회
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String materialListGET(Model model, Criteria cri) {
-		logger.debug("/Material/list 호출 -> materialListGET() 실행");
-		PageVO pageVO = new PageVO();
-		pageVO.setCri(cri);
-		pageVO.setTotalCount(MaterialService.getTotalCount());
+	    logger.debug("/Material/list 호출 -> materialListGET() 실행");
+	    PageVO pageVO = new PageVO();
+	    pageVO.setCri(cri);
+	    pageVO.setTotalCount(MaterialService.getTotalCount());
 
-		model.addAttribute("listUrl", "list");
-		model.addAttribute("pageVO", pageVO);
-		model.addAttribute("Material", MaterialService.findAllMaterials());
-		return "/Material/MaterialList";
+	    // 모든 원자재 목록을 조회합니다.
+	    List<MaterialVO> materials = MaterialService.findAllMaterials();
+
+	    model.addAttribute("listUrl", "list");
+	    model.addAttribute("pageVO", pageVO);
+	    model.addAttribute("Material", materials);
+	    return "/Material/MaterialList";
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
-	public String materialListPost(MaterialVO vo, @ModelAttribute("searchword") String searchword) {
-		logger.debug("/Material/list 호출 -> materialListPOST() 실행");		
+	public String materialListPost(MaterialVO vo,
+			@RequestParam(name = "searchword", required = false) String searchword) {
+		logger.debug("/Material/list 호출 -> materialListPOST() 실행");
 		MaterialService.editMaterialContent(vo);
-		if(!searchword.isEmpty()) {
+		if (!searchword.isEmpty()) {
 			return "redirect:/Material/searchlist";
 		}
 		return "redirect:/Material/MaterialList";
 	}
-	
+
 	@RequestMapping(value = "/content", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public MaterialVO MaterialContentGET(MaterialVO vo) {
@@ -66,27 +69,36 @@ public class MaterialController {
 	}
 
 	@RequestMapping(value = "/searchlist", method = RequestMethod.GET)
-	public String searchListGET(Model model, Map<String, Object> params, Criteria cri, @ModelAttribute("searchword") String searchword) {
-		logger.debug("/Material/searchlist 호출 -> searchListGET() 실행");
-		PageVO pageVO = new PageVO();
-		pageVO.setCri(cri);
-		pageVO.setTotalCount(MaterialService.getSearchCount(searchword));
-		
-		params.put("cri", cri);
-		params.put("searchword", searchword);
-		
-		model.addAttribute("searchword",searchword);
-		model.addAttribute("listUrl", "searchlist");
-		model.addAttribute("pageVO", pageVO);
-		model.addAttribute("list",MaterialService.getSearchList(params,cri, searchword));		
-		return "/Material/MaterialList";
+	public String searchListGET(Model model, Map<String, Object> params, Criteria cri,
+	        @ModelAttribute("searchword") String searchword,
+	        @RequestParam(name = "page", required = false) String page) {
+	    
+	    logger.debug("/Material/searchlist 호출 -> searchListGET() 실행");
+	    PageVO pageVO = new PageVO();
+	    pageVO.setCri(cri);
+	    
+	    params.put("cri", cri);
+	    params.put("searchword", searchword);
+	  //  params.put("filter", filter);
+	    
+	    pageVO.setTotalCount(MaterialService.getSearchCount(params));
+	    
+	    model.addAttribute("page", page);
+	    model.addAttribute("searchword", searchword);
+	  //  model.addAttribute("filter", filter);
+	    model.addAttribute("listUrl", "searchlist");
+	    model.addAttribute("pageVO", pageVO);
+	    model.addAttribute("list", MaterialService.getSearchList(params, cri, page));
+	    return "/Material/MaterialList";
 	}
 
+	
+	
 	// 입고 목록 조회
 	@RequestMapping(value = "/materialadd", method = RequestMethod.GET)
 	public void materialaddListGET(Model model, Criteria cri) {
 		logger.debug("/Material/add 호출 -> materialaddListGET() 실행");
-		
+
 		PageVO pageVO = new PageVO();
 		pageVO.setCri(cri);
 		pageVO.setTotalCount(MaterialService.getTotalCount());
@@ -94,7 +106,6 @@ public class MaterialController {
 		model.addAttribute("listUrl", "add");
 		model.addAttribute("pageVO", pageVO);
 		model.addAttribute("materialaddList", MaterialService.getmaterialaddList());
-		
 
 	}
 
@@ -151,84 +162,44 @@ public class MaterialController {
 	}
 
 	// 발주 신청 - POST
-	@RequestMapping(value = "/MatereialwriteForm", method = RequestMethod.POST)
-	public String matereialWriteFormPOST(MaterialOrderVO pvo) throws Exception {
+	@RequestMapping(value = "/MaterialwriteForm", method = RequestMethod.POST)
+	public String materialWriteFormPOST(MaterialOrderVO pvo, RedirectAttributes rttr) {
 
-		logger.debug("Controller: /Material/MatereialwriteForm/matereialWriteFormPOST() 호출");
-
-		// 전달 정보 저장, 확인
+		logger.debug("C - materialWriteFormPOST() 호출");
 		logger.debug("pvo: " + pvo);
 
 		// 서비스 - 신청서 작성 동작 호출(INSERT)
-		MaterialService.createMatereialOrder(pvo);
-		logger.debug("신청서 작성 완료");
+		MaterialService.insertMaterialOrder(pvo);
 
-		// 페이지 이동
-		logger.debug("/Matereial/MaterialOrderList 페이지 이동");
-		return "redirect:/Material/MaterialOrderList";
+		return "redirect:/Material/MaterialClose";
 	}
 
 	// 발주 목록 조회
 	@RequestMapping(value = "/MaterialOrderList", method = RequestMethod.GET)
 	public void materialorderListGET(Model model, Criteria cri) {
 		logger.debug("/Material/MaterialOrderList 호출 -> materialorderListGET() 실행");
-		
+
 		PageVO pageVO = new PageVO();
 		pageVO.setCri(cri);
 		pageVO.setTotalCount(MaterialService.getTotalCount());
 
 		model.addAttribute("listUrl", "MaterialOrderList");
 		model.addAttribute("pageVO", pageVO);
-		
+
 		model.addAttribute("MaterialOrderList", MaterialService.Materialorder());
-		
+
 	}
 
-	
-//	// 발주 내역 상세 조회 - GET
-//	@RequestMapping(value = "/MaterialorderDetail", method = RequestMethod.GET)
-//	@ResponseBody
-//	public MaterialOrderVO MaterialorderDetailGET(@RequestParam("materialod_id")Integer materialod_id) throws Exception{
-//		
-//		logger.debug("Controller: /Material/MaterialorderDetailGET(materialod_id)");
-//		
-//		return MaterialService.getMaterialorderDetail(materialod_id);
-//	}
-	
-	// 발주 내역 상세 조회 - GET
-	@RequestMapping(value = "/api/MaterialorderDetail", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public MaterialOrderVO MaterialorderDetailGET(@RequestParam("materialod_id") Integer materialod_id) throws Exception {
-	    logger.debug("Controller: /Material/api/MaterialorderDetailGET(materialod_id)");
-	    // 발주 내역 상세 정보
-	    return MaterialService.getMaterialorderDetail(materialod_id);
-	}
-
-
-	
-	
-
-	// 발주서 수정 - POST
-	@RequestMapping(value = "/updateDetailInfo", method = RequestMethod.POST)
-	public String updateDetailInfo(MaterialOrderVO vo) {
-		logger.debug("/Material/updateDetailInfo 호출 -> updateDetailInfo() 실행");
-
-		// 서비스 - 신청서 수정 동작 호출(UPDATE)
-		MaterialService.Materialupdate(vo);
-		
-		return "redirect:/Material/MaterialOrderList";
-	}
-	
 	// 발주서 삭제 - POST
 	@RequestMapping(value = "/deleteMaterial", method = RequestMethod.POST)
 	public String deleteMateialPOST(@RequestParam("chk") int[] materialod_id) {
 		logger.debug("C - deleteMateialPOST()");
-		logger.debug("vo : "+materialod_id);
-		
+		logger.debug("vo : " + materialod_id);
+
 		// 서비스 - 창고 삭제
 		MaterialService.deleteMaterial(materialod_id);
-		
+
 		return "redirect:/Material/MaterialOrderList";
-	}	
+	}
 
 }

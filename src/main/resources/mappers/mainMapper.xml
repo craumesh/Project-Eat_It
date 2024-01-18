@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.eatit.mapper.MainMapper">
+	  	    
+<select id="selectOrderChart" resultType="mainVO">
+	SELECT o.quantity as quantity, price, YEAR(o.update_date) AS order_year, MONTH(o.update_date) AS order_month
+	FROM orders o
+	JOIN masterdata_information mi
+	ON mi.product_no = o.product_no
+	WHERE order_status = '처리완료';
+</select>
+
+<select id="selectChartMonth" resultType="mainVO">
+	SELECT DISTINCT YEAR(update_date) AS order_year, MONTH(update_date) AS order_month
+	FROM orders
+	WHERE update_date > DATE_SUB(CURRENT_DATE, INTERVAL 5 MONTH)
+	AND order_status = '처리완료'
+	ORDER BY order_year, order_month
+	LIMIT 5;
+</select>
+
+<select id="selectChartYear" resultType="mainVO">
+	SELECT subquery.max_year AS order_year
+	FROM (
+	    SELECT MAX(YEAR(update_date)) AS max_year
+	    FROM orders
+	    WHERE order_status = '처리완료'
+	    GROUP BY YEAR(update_date)
+	    ORDER BY max_year DESC
+	    LIMIT 5
+	) AS subquery
+	GROUP BY subquery.max_year;
+</select>
+
+<select id="selectYearOrders" resultType="mainVO">
+	SELECT quantity
+	FROM orders
+	where YEAR(update_date) = #{order_year}
+	AND order_status = '처리완료';
+</select>
+
+<select id="selectMonthOrders" resultType="mainVO">
+	SELECT sum(quantity) as quantity, sum(price*quantity) as price
+	FROM orders o
+	JOIN masterdata_information mi
+	ON o.product_no = mi.product_no
+	where YEAR(update_date) = #{order_year}
+	AND month(update_date) = #{order_month}
+	AND order_status = '처리완료';
+</select>
+
+<select id="selectNowYearPrice" resultType="mainVO">
+	SELECT SUM(o.quantity*price) as price
+	FROM orders o
+	JOIN masterdata_information mi ON mi.product_no = o.product_no
+	WHERE YEAR(o.update_date) = YEAR(NOW())
+	AND order_status = '처리완료';
+</select>
+
+<select id="selectRecentUpdate" resultType="mainVO">
+	SELECT update_date
+	FROM orders
+	WHERE order_status = '처리완료'
+	ORDER BY update_date DESC
+	LIMIT 1;
+</select>
+
+</mapper>

@@ -116,10 +116,10 @@ public class MemberController {
 	}
 	
    @RequestMapping(value = "/profile", method = RequestMethod.POST)
-   public String profilePost(MemberVO vo, @RequestParam("prev-url") String prev_url) {
+   public String profilePost(MemberVO vo) {
       logger.debug("/profile 호출 -> profilePOST() 실행");
       mService.memberUpdateProfile(vo); 
       
-      return "redirect:/"+prev_url.substring(22);
+      return "redirect:/";
    }
 }
