@@ -73,6 +73,7 @@
                    	 홈페이지로 이동하시겠습니까?
                     <a href="/" class="text-primary text-gradient font-weight-bold">EatIt</a>
                   </p>
+                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token }">
                 </form>
               </div>
             </div>

@@ -14,4 +14,6 @@ public interface MemberService {
 	
 	// 내정보 수정 메서드
 	public void memberUpdateProfile(MemberVO vo);
+	
+	public MemberVO memberLoginInfo(MemberVO vo);
 }

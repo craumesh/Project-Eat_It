@@ -1,6 +1,7 @@
 package com.eatit.memberDomain;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import lombok.Data;
 
@@ -21,4 +22,7 @@ public class MemberVO {
 	private String active;
 	private Timestamp regdate;
 	private Timestamp update;
+	
+	// 조인으로 생성되는 결과를 저장하는 변수
+	private List<AuthVO> authList;
 }

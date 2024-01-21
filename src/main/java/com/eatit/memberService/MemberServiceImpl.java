@@ -42,8 +42,10 @@ public class MemberServiceImpl implements MemberService {
 		mdao.updateProfile(vo);
 	}
 
-	
-	
-	
+	@Override
+	public MemberVO memberLoginInfo(MemberVO vo) {
+		logger.debug("로그인 정보 조회");
+		return mdao.selectJoinMemberInfo(vo);
+	}
 	
 }

@@ -7,9 +7,9 @@
   <mapper namespace="com.eatit.mapper.MemberMapper">
   
   <!-- 로그인 -->
-  <select id="LoginMember" resultType="com.eatit.memberDomain.MemberVO">
+  <select id="LoginMember" resultType="MemberVO">
   	select * from member 
-  	where id=#{id} and pw=#{pw}
+  	where id=#{id}
   </select>
   
   
@@ -37,5 +37,31 @@
         status=#{status} 
         WHERE employee_no=#{employee_no}
      </update>
+     
+    <resultMap type="com.eatit.memberDomain.MemberVO" id="memberMap">
+        <id property="id" column="id"/>
+        <result property="id" column="id"/>
+        <result property="pw" column="pw"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="regdate" column="regdate"/>
+        <result property="update" column="update"/>
+        
+        <collection property="authList" resultMap="authMap"></collection>
+        
+    </resultMap>
+    
+    <resultMap type="com.eatit.memberDomain.AuthVO" id="authMap">
+        <result property="id" column="id"/>
+        <result property="auth" column="auth"/>    
+    </resultMap>
   
+  
+  	<select id="getMemberJoin" resultMap="memberMap" >
+      	<![CDATA[
+		    select m.id, pw, name, email, active, regdate, auth 
+			from member m LEFT JOIN member_auth a on m.id=a.id 
+			where m.id = #{id};
+		]]>   
+    </select>
   </mapper>

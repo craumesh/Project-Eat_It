@@ -50,15 +50,16 @@
 					  </a>
 					</li>
 					<li class="mb-2">
-					  <a class="dropdown-item border-radius-md" href="../members/memberLogout">
-						<div class="d-flex py-1">
-						  <div class="d-flex flex-column justify-content-center">
-							<h6 class="text-sm font-weight-normal mb-1">
-							  <span class="font-weight-bold">로그아웃</span>
-							</h6>
-						  </div>
-						</div>
-					  </a>
+						<form action="/members/memberLogout" method="post">
+						<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }">
+						  	<div class="d-flex py-1">
+							  <div class="d-flex flex-column justify-content-center">
+								<h6 class="text-sm font-weight-normal mb-1">
+								  <input id="logoutBtn" type="submit" class="dropdown-item border-radius-md font-weight-bold" value="로그아웃">
+								</h6>
+							  </div>
+							</div>
+						</form>
 					</li>
 				  </ul>
 			  </c:otherwise>

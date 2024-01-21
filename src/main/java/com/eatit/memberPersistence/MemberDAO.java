@@ -14,4 +14,6 @@ public interface MemberDAO {
 	
 	// 내정보 수정
 	public void updateProfile(MemberVO vo);
+	
+	public MemberVO selectJoinMemberInfo(MemberVO vo);
 }

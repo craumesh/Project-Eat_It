@@ -47,6 +47,7 @@
                    	 회원 신청하시겠습니까?
                     <a href="/members/memberJoin" class="text-primary text-gradient font-weight-bold">회원 등록</a>
                   </p>
+                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token }">
                 </form>
               </div>
             </div>

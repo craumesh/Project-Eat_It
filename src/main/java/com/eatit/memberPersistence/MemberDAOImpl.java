@@ -51,7 +51,11 @@ public class MemberDAOImpl implements MemberDAO {
 		
 	}
 
-	
+	@Override
+	public MemberVO selectJoinMemberInfo(MemberVO vo) {
+		logger.debug("DAO - 새 로그인");
+		return sqlSession.selectOne(NAMESPACE+".getMemberJoin",vo);
+	}
 	
 	
 }
