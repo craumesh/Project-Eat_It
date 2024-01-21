@@ -15,18 +15,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 
-//class test implements LogoutSuccessHandler{
-//
-//	@Override
-//	public void onLogoutSuccess(HttpServletRequest request,
-//			HttpServletResponse response,
-//			Authentication authentication)
-//			throws IOException, ServletException {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//	
-//}
 /**
  *  로그인 성공시 권한별로 페이지 이동
  */
