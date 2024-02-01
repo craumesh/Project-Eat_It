@@ -29,7 +29,7 @@
                 </div>
               </div>
               <div class="card-body">
-                <form role="form" class="text-start" method="post" onsubmit="login();">
+                <form role="form" class="text-start" method="post">
                   <div class="input-group input-group-outline my-3">
                     <input type="text" class="form-control" id="userId" name="id" placeholder="아이디" value="${savedId }" required>
                   </div>
@@ -41,13 +41,13 @@
                     <label class="form-check-label mb-0 ms-3" for="rememberMe">아이디 정보 기억</label>
                   </div>
                   <div class="text-center">
+                  	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token }">
                     <input type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2" id="loginBtn" value="로 그 인">
                   </div>
                   <p class="mt-4 text-sm text-center">
                    	 회원 신청하시겠습니까?
                     <a href="/members/memberJoin" class="text-primary text-gradient font-weight-bold">회원 등록</a>
                   </p>
-                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token }">
                 </form>
               </div>
             </div>

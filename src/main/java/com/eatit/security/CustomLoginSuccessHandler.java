@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -42,19 +43,19 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 		if(roleNames.contains("ROLE_ADMIN")) {
 			logger.debug(" 관리자 로그인 성공! ");
 			// 페이지 이동
-			response.sendRedirect("/sample/admin");
+			response.sendRedirect("/");
 			return;
 		}
 		
 		if(roleNames.contains("ROLE_MEMBER")) {
 			logger.debug(" 일반 유저 로그인 성공! ");
 			// 페이지 이동
-			response.sendRedirect("/sample/member");
+			response.sendRedirect("/");
 			return;
 		}
 		
 		// 그외 나머지 
-		response.sendRedirect("/");
+		response.sendRedirect("/members/memberLogin");
 		
 	}
 	

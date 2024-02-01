@@ -35,15 +35,15 @@ public class MemberController {
 	
 	// 로그인 - 정보 입력(GET)
 	// http://localhost:8088/members/memberLogin
-	@RequestMapping(value = "/memberLogin", method = RequestMethod.GET)
+	@RequestMapping(value="/memberLogin", method=RequestMethod.GET)
 	public void memberLoginGET() throws Exception{
 		logger.debug("/members/memberLogin 호출 -> memberLoginGET() 실행");
 	}
 	
 	// 로그인 - 정보 처리(POST)
-	@RequestMapping(value="memberLogin", method = RequestMethod.POST)
+	@RequestMapping(value="/memberLogin", method=RequestMethod.POST)
 	public String memberLoginPOST(MemberVO vo, HttpSession session, RedirectAttributes rttr) {
-		logger.debug("/members/login.jsp post방식 호출 ");
+		logger.debug("/members/memberLogin 호출 -> memberLoginPOST() 실행 ");
 		
 		// 전달정보 저장
 		logger.debug("전달정보 : "+vo);
@@ -71,16 +71,19 @@ public class MemberController {
 			        session.setAttribute("depart_name", resultVO.getDepart_name());
 			        rttr.addFlashAttribute("result", "LOGIN");
 			        return "redirect:/";
+//			        logger.debug("아이디는 있으나 리턴안됨");
 			    }
 			} else {
                 // 비밀번호 불일치
                 rttr.addFlashAttribute("result", "FAILLOGIN");
+                logger.debug("비밀번호 불일치");
                 return "redirect:/members/memberLogin";
             }
 		}
 		else {
 			// X => /members/memberLogin 페이지 호출
 			rttr.addFlashAttribute("result","FAILLOGIN");
+			logger.debug("아이디 없음");
 			return "redirect:/members/memberLogin";
 		}
 	}
@@ -94,7 +97,6 @@ public class MemberController {
 	@RequestMapping(value = "/accessErr",method = RequestMethod.GET)
 	public void accessErr(Authentication auth) throws Exception {
 	    logger.debug("accessErr() 호출 - 접근권한 문제 발생!!!");
-	    logger.debug("/accessErr.jsp 뷰페이지 연결");
 
 	    if (auth == null) {
 	        logger.debug("인증되지 않은 사용자입니다.");

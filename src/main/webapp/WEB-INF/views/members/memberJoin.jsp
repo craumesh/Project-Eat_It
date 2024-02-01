@@ -46,7 +46,7 @@
                 </div>
               </div>
               <div class="card-body">
-                <form role="form" class="text-start" method="post">
+                <form action="/hr/list" role="form" class="text-start" method="post">
                   <div class="input-group input-group-outline my-3">
                     <input type="text" class="form-control" name="id" placeholder="아이디 입력" required>
                   </div>

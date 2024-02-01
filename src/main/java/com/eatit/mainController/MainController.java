@@ -36,4 +36,9 @@ public class MainController {
 		return mService.selectOrderChart();
 	}
 	
+	@RequestMapping(value="/login",method=RequestMethod.GET)
+	public void logintest() {
+		logger.debug("/login 호출  => logintest()실행");
+	}
+	
 }
